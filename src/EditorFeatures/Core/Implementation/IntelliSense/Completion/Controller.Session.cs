@@ -28,6 +28,14 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.IntelliSense.Completion
 
                 this.PresenterSession.ItemCommitted += OnPresenterSessionItemCommitted;
                 this.PresenterSession.ItemSelected += OnPresenterSessionItemSelected;
+
+                // We need to track which (if any) of our completion sets is selected
+                this.PresenterSession.CompletionListSelected += OnPresenterCompletionListSelected;
+            }
+
+            private void OnPresenterCompletionListSelected(object sender, CompletionListSelectedEventArgs e)
+            {
+                throw new System.NotImplementedException();
             }
 
             private ITextBuffer SubjectBuffer

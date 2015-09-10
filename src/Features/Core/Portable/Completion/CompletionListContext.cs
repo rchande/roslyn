@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using Microsoft.CodeAnalysis.Options;
+using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Completion
 {
@@ -13,6 +14,8 @@ namespace Microsoft.CodeAnalysis.Completion
         private readonly ImmutableArray<CompletionItem>.Builder _itemsBuilder;
         private CompletionItem _builder;
         private bool _isExclusive;
+        private ImmutableArray<CompletionItem> _specializedList;
+        private string _specializedListTitle;
 
         public Document Document { get; }
         public int Position { get; }
@@ -86,6 +89,17 @@ namespace Microsoft.CodeAnalysis.Completion
 
             _builder = builder;
         }
+
+        public void RegisterSpecializedList(ImmutableArray<CompletionItem> items, string specializedListTitle)
+        {
+            Contract.ThrowIfFalse(_specializedList == null, "We only support 1 specialized list!");
+
+            _specializedList = items;
+            _specializedListTitle = specializedListTitle;
+        }
+
+        public ImmutableArray<CompletionItem> SpecializedItems => _specializedList;
+        public string SpecializedListTitle => _specializedListTitle;
 
         public void MakeExclusive(bool value)
         {

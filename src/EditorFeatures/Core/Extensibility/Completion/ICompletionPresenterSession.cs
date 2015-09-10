@@ -19,5 +19,6 @@ namespace Microsoft.CodeAnalysis.Editor
 
         event EventHandler<CompletionItemEventArgs> ItemSelected;
         event EventHandler<CompletionItemEventArgs> ItemCommitted;
+        event EventHandler<CompletionListSelectedEventArgs> CompletionListSelected;
     }
 }

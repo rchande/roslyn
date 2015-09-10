@@ -25,6 +25,7 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.IntelliSense.Completion.P
         public event EventHandler<EventArgs> Dismissed;
         public event EventHandler<CompletionItemEventArgs> ItemCommitted;
         public event EventHandler<CompletionItemEventArgs> ItemSelected;
+        public event EventHandler<CompletionListSelectedEventArgs> CompletionListSelected;
 
         private readonly CompletionSet2 _completionSet;
 
@@ -95,6 +96,7 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.IntelliSense.Completion.P
                 }
 
                 _editorSessionOpt.Dismissed += (s, e) => OnEditorSessionDismissed();
+                _editorSessionOpt.SelectedCompletionSetChanged += OnSelectedCompletionSetChanged;
 
                 // So here's the deal.  We cannot create the editor session and give it the right
                 // items (even though we know what they are).  Instead, the session will call
@@ -105,6 +107,17 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.IntelliSense.Completion.P
                 // session.
                 _editorSessionOpt.Properties.AddProperty(Key, this);
                 _editorSessionOpt.Start();
+            }
+        }
+
+        private void OnSelectedCompletionSetChanged(object sender, ValueChangedEventArgs<CompletionSet> e)
+        {
+            AssertIsForeground();
+
+            var completionListSelected = this.CompletionListSelected;
+            if (CompletionListSelected != null)
+            {
+                CompletionListSelected(this, new CompletionListSelectedEventArgs(e.OldValue, e.NewValue));
             }
         }
 
@@ -146,6 +159,7 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.IntelliSense.Completion.P
                 completionItemSelected(this, new CompletionItemEventArgs(completionItem));
             }
         }
+
 
         internal void AugmentCompletionSession(IList<CompletionSet> completionSets)
         {

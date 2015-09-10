@@ -25,6 +25,7 @@ Namespace Microsoft.CodeAnalysis.Editor.UnitTests.IntelliSense
         Public Event Dismissed As EventHandler(Of EventArgs) Implements ICompletionPresenterSession.Dismissed
         Public Event ItemSelected As EventHandler(Of CompletionItemEventArgs) Implements ICompletionPresenterSession.ItemSelected
         Public Event ItemCommitted As EventHandler(Of CompletionItemEventArgs) Implements ICompletionPresenterSession.ItemCommitted
+        Public Event CompletionListSelected As EventHandler(Of CompletionListSelectedEventArgs) Implements ICompletionPresenterSession.CompletionListSelected
 
         Public Sub New(testState As IIntelliSenseTestState)
             Me._testState = testState

@@ -79,10 +79,10 @@ namespace Microsoft.CodeAnalysis.Completion
         private class ProviderList
         {
             public CompletionListProvider Provider;
-            public CompletionList List;
+            public CompletionListPair Lists;
         }
 
-        public async Task<CompletionList> GetCompletionListAsync(
+        public async Task<CompletionListPair> GetCompletionListAsync(
             Document document,
             int position,
             CompletionTriggerInfo triggerInfo,
@@ -121,26 +121,26 @@ namespace Microsoft.CodeAnalysis.Completion
                 var completionList = await GetCompletionListAsync(provider, document, position, triggerInfo, options, cancellationToken).ConfigureAwait(false);
                 if (completionList != null)
                 {
-                    providersAndLists.Add(new ProviderList { Provider = provider, List = completionList });
+                    providersAndLists.Add(new ProviderList { Provider = provider, Lists = completionList });
                 }
             }
 
             // See if there was a group provided that was exclusive and had items in it.  If so, then
             // that's all we'll return.
             var firstExclusiveList = providersAndLists.FirstOrDefault(
-                t => t.List.IsExclusive && t.List.Items.Any());
+                t => t.Lists.PrimaryList.IsExclusive && t.Lists.PrimaryList.Items.Any());
 
             if (firstExclusiveList != null)
             {
-                return MergeAndPruneCompletionLists(SpecializedCollections.SingletonEnumerable(firstExclusiveList.List), completionRules);
+                return MergeAndPruneCompletionLists(SpecializedCollections.SingletonEnumerable(firstExclusiveList.Lists), completionRules);
             }
 
             // If no exclusive providers provided anything, then go through the remaining
             // triggered list and see if any provide items.
-            var nonExclusiveLists = providersAndLists.Where(t => !t.List.IsExclusive).ToList();
+            var nonExclusiveLists = providersAndLists.Where(t => !t.Lists.PrimaryList.IsExclusive).ToList();
 
             // If we still don't have any items, then we're definitely done.
-            if (!nonExclusiveLists.Any(g => g.List.Items.Any()))
+            if (!nonExclusiveLists.Any(g => g.Lists.PrimaryList.Items.Any()))
             {
                 return null;
             }
@@ -153,9 +153,9 @@ namespace Microsoft.CodeAnalysis.Completion
             foreach (var provider in nonUsedProviders)
             {
                 var completionList = await GetCompletionListAsync(provider, document, position, triggerInfo, options, cancellationToken).ConfigureAwait(false);
-                if (completionList != null && !completionList.IsExclusive)
+                if (completionList != null && !completionList.PrimaryList.IsExclusive)
                 {
-                    nonUsedNonExclusiveProviders.Add(new ProviderList { Provider = provider, List = completionList });
+                    nonUsedNonExclusiveProviders.Add(new ProviderList { Provider = provider, Lists = completionList });
                 }
             }
 
@@ -168,7 +168,7 @@ namespace Microsoft.CodeAnalysis.Completion
             // Providers are ordered, but we processed them in our own order.  Ensure that the
             // groups are properly ordered based on the original providers.
             allProvidersAndLists.Sort((p1, p2) => completionProviderToIndex[p1.Provider] - completionProviderToIndex[p2.Provider]);
-            return MergeAndPruneCompletionLists(allProvidersAndLists.Select(g => g.List), completionRules);
+            return MergeAndPruneCompletionLists(allProvidersAndLists.Select(g => g.Lists), completionRules);
         }
 
         private static CompletionList MergeAndPruneCompletionLists(IEnumerable<CompletionList> completionLists, CompletionRules completionRules)
@@ -268,7 +268,7 @@ namespace Microsoft.CodeAnalysis.Completion
             return result;
         }
 
-        private static async Task<CompletionList> GetCompletionListAsync(
+        private static async Task<CompletionListPair> GetCompletionListAsync(
             CompletionListProvider provider,
             Document document,
             int position,
@@ -280,7 +280,10 @@ namespace Microsoft.CodeAnalysis.Completion
 
             await provider.ProduceCompletionListAsync(context).ConfigureAwait(false);
 
-            return new CompletionList(context.GetItems(), context.Builder, context.IsExclusive);
+            var primaryList = new CompletionList(context.GetItems(), context.Builder, context.IsExclusive);
+            var specializedList = new CompletionList(context.SpecializedItems);
+
+            return new CompletionListPair(primaryList, specializedList, context.SpecializedListTitle);
         }
 
         public bool IsTriggerCharacter(SourceText text, int characterPosition, IEnumerable<CompletionListProvider> completionProviders, OptionSet options)
