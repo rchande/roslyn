@@ -44,8 +44,8 @@ class C
             var markup = @"
 class C
 {
-    (int, int) y = [|($$)
-|]}";
+    (int, int) y = [|($$)|]
+}";
 
             var expectedOrderedItems = new List<SignatureHelpTestItem>();
             expectedOrderedItems.Add(new SignatureHelpTestItem("(int, int)", currentParameterIndex: 0));
@@ -59,7 +59,7 @@ class C
             var markup = @"
 class C
 {
-    (int, int) y = [|(1, $$
+    (int, int) y = [|(1,$$
 |]}";
 
             var expectedOrderedItems = new List<SignatureHelpTestItem>();
@@ -74,8 +74,8 @@ class C
             var markup = @"
 class C
 {
-    (int, int) y = [|(1, $$)
-|]}";
+    (int, int) y = [|(1,$$)|]
+}";
 
             var expectedOrderedItems = new List<SignatureHelpTestItem>();
             expectedOrderedItems.Add(new SignatureHelpTestItem("(int, int)", currentParameterIndex: 1));
@@ -138,7 +138,7 @@ class C
             var markup = @"
 class C
 {
-    (int, object) y = [|(1, (2, $$
+    (int, object) y = [|(1, (2,$$
 |]}";
 
             var expectedOrderedItems = new List<SignatureHelpTestItem>();

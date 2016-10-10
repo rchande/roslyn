@@ -397,6 +397,7 @@ namespace Microsoft.CodeAnalysis.Editor.UnitTests.SignatureHelp
 
                 if (!signatureHelpProvider.IsTriggerCharacter(triggerInfo.TriggerCharacter.Value))
                 {
+                    Assert.True(expectedOrderedItemsOrNull == null || expectedOrderedItemsOrNull.IsEmpty());
                     return;
                 }
             }
