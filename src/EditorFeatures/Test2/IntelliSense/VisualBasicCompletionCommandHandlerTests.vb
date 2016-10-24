@@ -2524,6 +2524,7 @@ Anonymous Types:
             End Using
         End Function
 
+<<<<<<< HEAD
         <WpfFact, Trait(Traits.Feature, Traits.Features.Completion)>
         Public Async Function TestSymbolInTupleLiteral() As Task
             Using state = TestState.CreateVisualBasicTestState(
@@ -2739,23 +2740,42 @@ End Class
             End Using
         End Function
 
-        <ExportLanguageService(GetType(ISnippetInfoService), LanguageNames.VisualBasic), System.Composition.Shared>
-        Friend Class MockSnippetInfoService
-            Implements ISnippetInfoService
+        <WorkItem(13161, "https://github.com/dotnet/roslyn/issues/13161")>
+        <WpfFact, Trait(Traits.Feature, Traits.Features.Completion)>
+        Public Async Function CommitGenericDoesNotInsertEllipsis() As Task
+            Using state = TestState.CreateVisualBasicTestState(
+                            <Document><![CDATA[
+Interface Foo(Of T)
+End Interface
 
-            Public Function GetSnippetsAsync_NonBlocking() As IEnumerable(Of SnippetInfo) Implements ISnippetInfoService.GetSnippetsIfAvailable
-                Return SpecializedCollections.SingletonEnumerable(New SnippetInfo("Shortcut", "Title", "Description", "Path"))
-            End Function
+Class Bar
+    Implements $$
+End Class]]></Document>)
 
-            Public Function ShouldFormatSnippet(snippetInfo As SnippetInfo) As Boolean Implements ISnippetInfoService.ShouldFormatSnippet
-                Return False
-            End Function
+                Dim unicodeEllipsis = ChrW(&H2026).ToString()
+                state.SendTypeChars("Foo")
+                state.SendTab()
+                Await state.AssertCompletionSession()
+                Assert.Contains("Foo(", state.GetLineTextFromCaretPosition())
+                Assert.DoesNotContain(unicodeEllipsis, state.GetLineTextFromCaretPosition())
+            End Using
+        End Function
 
-            Public Function SnippetShortcutExists_NonBlocking(shortcut As String) As Boolean Implements ISnippetInfoService.SnippetShortcutExists_NonBlocking
-                Return shortcut = "Shortcut"
-            End Function
-        End Class
+		<ExportLanguageService(GetType(ISnippetInfoService), LanguageNames.VisualBasic), System.Composition.Shared>
+		Friend Class MockSnippetInfoService
+			Implements ISnippetInfoService
 
-    End Class
+			Public Function GetSnippetsAsync_NonBlocking() As IEnumerable(Of SnippetInfo) Implements ISnippetInfoService.GetSnippetsIfAvailable
+				Return SpecializedCollections.SingletonEnumerable(New SnippetInfo("Shortcut", "Title", "Description", "Path"))
+			End Function
 
+			Public Function ShouldFormatSnippet(snippetInfo As SnippetInfo) As Boolean Implements ISnippetInfoService.ShouldFormatSnippet
+				Return False
+			End Function
+
+			Public Function SnippetShortcutExists_NonBlocking(shortcut As String) As Boolean Implements ISnippetInfoService.SnippetShortcutExists_NonBlocking
+				Return shortcut = "Shortcut"
+			End Function
+		End Class
+	End Class
 End Namespace
