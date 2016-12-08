@@ -66,6 +66,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Completion.Providers
             Dim text = Await document.GetTextAsync(cancellationToken).ConfigureAwait(False)
 
             For Each parameter In unspecifiedParameters
+<<<<<<< HEAD
                 context.AddItem(
                     SymbolCompletionItem.Create(
                         displayText:=parameter.Name & s_colonEquals,
@@ -76,6 +77,14 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Completion.Providers
                         contextPosition:=position,
                         isArgumentName:=True,
                         rules:=CompletionItemRules.Default))
+=======
+                context.AddItem(SymbolCompletionItem.CreateWithSymbolId(
+                    displayText:=parameter.Name & s_colonEquals,
+                    insertionText:=parameter.Name.ToIdentifierToken().ToString() & s_colonEquals,
+                    symbol:=parameter,
+                    contextPosition:=position,
+                    rules:=s_itemRules))
+>>>>>>> 0029af2... Don't use symbolid in symbl completion
             Next
         End Function
 

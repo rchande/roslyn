@@ -10,10 +10,11 @@ Imports Microsoft.CodeAnalysis.Options
 Imports Microsoft.CodeAnalysis.Text
 Imports Microsoft.CodeAnalysis.VisualBasic.Extensions.ContextQuery
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
+Imports System.Collections.Immutable
 
 Namespace Microsoft.CodeAnalysis.VisualBasic.Completion.Providers
     Partial Friend Class CrefCompletionProvider
-        Inherits CommonCompletionProvider
+        Inherits AbstractCrefCompletionProvider
 
         Private Shared ReadOnly s_crefFormat As SymbolDisplayFormat =
             New SymbolDisplayFormat(
@@ -56,7 +57,11 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Completion.Providers
 
             Dim text = Await document.GetTextAsync(cancellationToken).ConfigureAwait(False)
 
+<<<<<<< HEAD
             Dim items = CreateCompletionItems(workspace, semanticModel, symbols, token.SpanStart, context.DefaultItemSpan)
+=======
+            Dim items = CreateCompletionItems(workspace, semanticModel, symbols, position)
+>>>>>>> 0029af2... Don't use symbolid in symbl completion
             context.AddItems(items)
 
             If IsFirstCrefParameterContext(token) Then
@@ -65,6 +70,28 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Completion.Providers
             End If
 
             context.IsExclusive = True
+        End Function
+        Protected Overrides Async Function GetSymbolsAsync(document As Document, position As Integer, options As OptionSet, cancellationToken As CancellationToken) As Task(Of (SyntaxToken, SemanticModel, ImmutableArray(Of ISymbol)))
+            Dim tree = Await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(False)
+            Dim token = tree.GetTargetToken(position, cancellationToken)
+
+            If IsCrefTypeParameterContext(token) Then
+                Return Nothing
+            End If
+
+            ' To get a Speculative SemanticModel (which is much faster), we need to 
+            ' walk up to the node the DocumentationTrivia is attached to.
+            Dim parentNode = token.Parent?.FirstAncestorOrSelf(Of DocumentationCommentTriviaSyntax)()?.ParentTrivia.Token.Parent
+            _testSpeculativeNodeCallbackOpt?.Invoke(parentNode)
+            If parentNode Is Nothing Then
+                Return Nothing
+            End If
+
+            Dim semanticModel = Await document.GetSemanticModelForNodeAsync(parentNode, cancellationToken).ConfigureAwait(False)
+            Dim workspace = document.Project.Solution.Workspace
+
+            Dim symbols = GetSymbols(token, semanticModel, cancellationToken)
+            Return (token, semanticModel, symbols.ToImmutableArray())
         End Function
 
         Private Shared Function IsCrefTypeParameterContext(token As SyntaxToken) As Boolean
@@ -108,7 +135,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Completion.Providers
             Return token.IsChildToken(Function(x As CrefSignatureSyntax) x.OpenParenToken)
         End Function
 
-        Private Shared Function GetSymbols(token As SyntaxToken, semanticModel As SemanticModel, cancellationToken As CancellationToken) As IEnumerable(Of ISymbol)
+        Private Overloads Shared Function GetSymbols(token As SyntaxToken, semanticModel As SemanticModel, cancellationToken As CancellationToken) As IEnumerable(Of ISymbol)
             If IsCrefStartContext(token) Then
                 Return semanticModel.LookupSymbols(token.SpanStart)
             ElseIf IsCrefParameterListContext(token) Then
@@ -185,6 +212,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Completion.Providers
 
             Dim displayString = builder.ToString()
 
+<<<<<<< HEAD
             Return SymbolCompletionItem.Create(displayText:=displayString,
                                                insertionText:=Nothing,
                                                span:=span,
@@ -204,6 +232,19 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Completion.Providers
         Private Function CreateOfCompletionItem(span As TextSpan) As CompletionItem
             Return CommonCompletionItem.Create("Of", span, glyph:=Glyph.Keyword,
                                       description:=RecommendedKeyword.CreateDisplayParts("Of", VBFeaturesResources.OfKeywordToolTip))
+=======
+            Return SymbolCompletionItem.CreateWithNameAndKind(
+                displayText:=displayString,
+                insertionText:=Nothing,
+                symbols:=ImmutableArray.Create(symbol),
+                contextPosition:=position,
+                rules:=GetRules(displayString))
+        End Function
+
+        Private Function CreateOfCompletionItem() As CompletionItem
+            Return CommonCompletionItem.Create("Of", glyph:=Glyph.Keyword,
+                                      description:=RecommendedKeyword.CreateDisplayParts("Of", VBFeaturesResources.Identifies_a_type_parameter_on_a_generic_class_structure_interface_delegate_or_procedure))
+>>>>>>> 0029af2... Don't use symbolid in symbl completion
         End Function
 
         Private Shared s_WithoutOpenParen As CharacterSetModificationRule = CharacterSetModificationRule.Create(CharacterSetModificationKind.Remove, "("c)

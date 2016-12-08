@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Completion;
@@ -91,12 +92,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Completion.Providers
             return CSharpSyntaxContext.CreateContext(workspace, semanticModel, position, cancellationToken);
         }
 
-        protected override ValueTuple<string, string> GetDisplayAndInsertionText(ISymbol symbol, AbstractSyntaxContext context)
+        protected override (string, string) GetDisplayAndInsertionText(ISymbol symbol, AbstractSyntaxContext context)
         {
             var insertionText = GetInsertionText(symbol, context);
             var displayText = symbol.GetArity() == 0 ? insertionText : string.Format("{0}<>", insertionText);
 
-            return ValueTuple.Create(displayText, insertionText);
+            return (displayText, insertionText);
         }
 
         private static CompletionItemRules s_importDirectiveRules =

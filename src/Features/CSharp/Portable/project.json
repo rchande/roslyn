@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "System.ValueTuple": "4.0.1-beta-24425-02"
   },
   "frameworks": {
     ".NETPortable,Version=v4.5,Profile=Profile7": {}

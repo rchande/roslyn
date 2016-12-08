@@ -117,7 +117,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.Completion.Providers
             Dim displayAndInsertionText = CompletionUtilities.GetDisplayAndInsertionText(
                 symbol, isAttributeNameContext:=False, isAfterDot:=context.IsRightOfNameSeparator, isWithinAsyncMethod:=context.WithinAsyncMethod, syntaxFacts:=context.GetLanguageService(Of ISyntaxFactsService)())
 
-            Return SymbolCompletionItem.Create(
+            Return SymbolCompletionItem.CreateWithSymbolId(
                 displayText:=displayAndInsertionText.Item1,
                 insertionText:=displayAndInsertionText.Item2,
                 span:=span,

@@ -32,7 +32,7 @@ namespace Microsoft.CodeAnalysis.Completion.Providers
         {
         }
 
-        protected abstract ValueTuple<string, string> GetDisplayAndInsertionText(ISymbol symbol, AbstractSyntaxContext context);
+        protected abstract (string, string) GetDisplayAndInsertionText(ISymbol symbol, AbstractSyntaxContext context);
         protected abstract CompletionItemRules GetCompletionItemRules(IReadOnlyList<ISymbol> symbols, AbstractSyntaxContext context);
 
         /// <summary>
@@ -116,13 +116,12 @@ namespace Microsoft.CodeAnalysis.Completion.Providers
 
         protected virtual CompletionItem CreateItem(string displayText, string insertionText, int position, List<ISymbol> symbols, AbstractSyntaxContext context, TextSpan span, bool preselect, SupportedPlatformData supportedPlatformData)
         {
-            return SymbolCompletionItem.Create(
+            return SymbolCompletionItem.CreateWithSymbolId(
                 displayText: displayText,
                 insertionText: insertionText,
                 filterText: GetFilterText(symbols[0], displayText, context),
                 span: span,
                 contextPosition: context.Position,
-                descriptionPosition: position,
                 symbols: symbols,
                 supportedPlatforms: supportedPlatformData,
                 matchPriority: preselect ? MatchPriority.Preselect : MatchPriority.Default,
