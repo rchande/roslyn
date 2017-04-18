@@ -20,6 +20,7 @@
   <ItemGroup>
     <Compile Include="AbstractIntegrationTest.cs" />
     <Compile Include="AbstractInteractiveWindowTest.cs" />
+    <Compile Include="CSharp\CSharpETW.cs" />
     <Compile Include="CSharp\CSharpReferenceHighlighting.cs" />
     <Compile Include="CSharp\CSharpEncapsulateField.cs" />
     <Compile Include="CSharp\CSharpF1Help.cs" />
