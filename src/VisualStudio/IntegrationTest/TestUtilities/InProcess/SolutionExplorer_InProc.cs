@@ -310,7 +310,7 @@ namespace Microsoft.VisualStudio.IntegrationTest.Utilities.InProcess
 
                 foreach (var directoryToDelete in directoriesToDelete)
                 {
-                    IntegrationHelper.TryDeleteDirectoryRecursively(directoryToDelete);
+                    // IntegrationHelper.TryDeleteDirectoryRecursively(directoryToDelete);
                 }
             }
         }
