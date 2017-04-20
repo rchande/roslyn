@@ -65,20 +65,32 @@ namespace F1TestNamespace
     }
     #endregion TaoRegion
 }";
-
-            var type = Microsoft.Diagnostics.Tracing.Parsers.RoslynEventSource.FunctionId.WorkCoordinator_AsyncWorkItemQueue_LastItem.ToString();
-            var option = FunctionIdOptions.GetOption(FunctionId.WorkCoordinator_AsyncWorkItemQueue_LastItem);
-            VisualStudio.Workspace.SetOption(option.Name, option.Feature, true);
-            TraceEventMonitor.StartListener(VisualStudio.HostProcess);
-            TraceEventMonitor.StartListening(type);
+            ETWActions.StartETWListener(VisualStudio);
             SetUpEditor(text);
-            var span = TimeSpan.FromMinutes(5);
-            TraceEventMonitor.WaitFor(type, span);
+            ETWActions.WaitForSolutionCrawler(VisualStudio);
 
             VisualStudio.ExecuteCommand("Tools.ForceGC");
         }
 
-        private void Verify(string word, string expectedKeyword)
+        [Fact, Trait(Traits.Feature, Traits.Features.F1Help)]
+        void ETWTyping()
+        {
+            VisualStudio.SolutionExplorer.OpenSolution(@"C:\rs\RoslynSolutions\Roslyn-CSharp.sln");
+            ETWActions.ForceGC(VisualStudio);
+            //VisualStudio.SolutionExplorer.OpenFile(new Microsoft.VisualStudio.IntegrationTest.Utilities.Common.ProjectUtils.Project(@"CSharpCompiler.mod"), "LanguageParser.cs");
+            //VisualStudio.Editor.NavigateToSendKeys("LanguageParser.cs");
+            VisualStudio.ExecuteCommand("File.OpenFile", @"C:\rs\RoslynSolutions\Source\Compilers\CSharp\Source\Parser\LanguageParser.cs");
+            ETWActions.StartETWListener(VisualStudio);
+            ETWActions.WaitForSolutionCrawler(VisualStudio);
+            ETWActions.ForceGC(VisualStudio);
+            ETWActions.WaitForIdleCPU();
+            VisualStudio.ExecuteCommand("Edit.GoTo", "9524");
+            VisualStudio.Editor.PlayBackTyping(@"C:\roslyn-internal\Closed\Test\PerformanceTests\Perf\tests\CSharp\TypingInputs\CSharpGoldilocksInput-MultipliedDelay.txt");
+
+        }
+
+
+            private void Verify(string word, string expectedKeyword)
         {
             VisualStudio.Editor.PlaceCaret(word, charsOffset: -1);
             Assert.Contains(expectedKeyword, VisualStudio.Editor.GetF1Keyword());
