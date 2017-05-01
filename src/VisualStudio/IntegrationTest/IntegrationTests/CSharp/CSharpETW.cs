@@ -5,18 +5,18 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Internal.Log;
 using Microsoft.VisualStudio.IntegrationTest.Utilities;
 using Microsoft.VisualStudio.IntegrationTest.Utilities.InProcess;
+using Microsoft.VisualStudio.IntegrationTest.Utilities.OutOfProcess;
 using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Roslyn.VisualStudio.IntegrationTests.CSharp
 {
     [Collection(nameof(SharedIntegrationHostFixture))]
-    public class CSharpETW : AbstractEditorTest
+    public class CSharpETW : AbstractIntegrationTest
     {
-        protected override string LanguageName => LanguageNames.CSharp;
 
         public CSharpETW(VisualStudioInstanceFactory instanceFactory)
-            : base(instanceFactory, nameof(CSharpETW))
+            : base(instanceFactory)
         {
         }
 
@@ -66,7 +66,7 @@ namespace F1TestNamespace
     #endregion TaoRegion
 }";
             ETWActions.StartETWListener(VisualStudio);
-            SetUpEditor(text);
+            //SetUpEditor(text);
             ETWActions.WaitForSolutionCrawler(VisualStudio);
 
             VisualStudio.ExecuteCommand("Tools.ForceGC");
@@ -80,13 +80,21 @@ namespace F1TestNamespace
             //VisualStudio.SolutionExplorer.OpenFile(new Microsoft.VisualStudio.IntegrationTest.Utilities.Common.ProjectUtils.Project(@"CSharpCompiler.mod"), "LanguageParser.cs");
             //VisualStudio.Editor.NavigateToSendKeys("LanguageParser.cs");
             VisualStudio.ExecuteCommand("File.OpenFile", @"C:\rs\RoslynSolutions\Source\Compilers\CSharp\Source\Parser\LanguageParser.cs");
-            ETWActions.StartETWListener(VisualStudio);
-            ETWActions.WaitForSolutionCrawler(VisualStudio);
-            ETWActions.ForceGC(VisualStudio);
-            ETWActions.WaitForIdleCPU();
+            //ETWActions.StartETWListener(VisualStudio);
+            //ETWActions.WaitForSolutionCrawler(VisualStudio);
+            //ETWActions.ForceGC(VisualStudio);
+            //ETWActions.WaitForIdleCPU();
             VisualStudio.ExecuteCommand("Edit.GoTo", "9524");
-            VisualStudio.Editor.PlayBackTyping(@"C:\roslyn-internal\Closed\Test\PerformanceTests\Perf\tests\CSharp\TypingInputs\CSharpGoldilocksInput-MultipliedDelay.txt");
+            //ETWActions.WaitForSolutionCrawler(VisualStudio);
 
+            //using (DelayTracker.Start(@"C:\typingResults\", @"C:\roslyn-internal\open\binaries\release\dlls\PerformanceTestUtilities\TypingDelayAnalyzer.exe", "typing"))
+            //{
+            VisualStudio.Editor.PlayBackTyping(@"C:\roslyn-internal\Closed\Test\PerformanceTests\Perf\tests\CSharp\TypingInputs\CSharpGoldilocksInput-MultipliedDelay.txt");
+            //}
+
+            //ETWActions.StopETWListener();
+
+            System.Threading.Thread.Sleep(30000);
         }
 
 

@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Editor.Options;
 using Microsoft.CodeAnalysis.Editor.Shared.Options;
@@ -23,6 +24,11 @@ namespace Microsoft.VisualStudio.IntegrationTest.Utilities.InProcess
         private VisualStudioWorkspace_InProc()
         {
             _visualStudioWorkspace = GetComponentModelService<VisualStudioWorkspace>();
+        }
+
+        ~VisualStudioWorkspace_InProc()
+        {
+            MessageBox.Show("Bad!");
         }
 
         public static VisualStudioWorkspace_InProc Create()

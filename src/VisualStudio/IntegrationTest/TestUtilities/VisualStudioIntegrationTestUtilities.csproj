@@ -62,6 +62,7 @@
     <Compile Include="InProcess\Editor_InProc.cs" />
     <Compile Include="Interop\NativeMethods.cs" />
     <Compile Include="LightBulbHelper.cs" />
+    <Compile Include="OutOfProcess\DelayTracker.cs" />
     <Compile Include="OutOfProcess\PlayBackTyping_OutOfProc.cs" />
     <Compile Include="OutOfProcess\InlineRenameDialog_OutOfProc.cs" />
     <Compile Include="OutOfProcess\ChangeSignatureDialog_OutOfProc.cs" />
