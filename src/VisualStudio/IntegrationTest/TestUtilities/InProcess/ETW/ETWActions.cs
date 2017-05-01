@@ -14,6 +14,11 @@ namespace Microsoft.VisualStudio.IntegrationTest.Utilities.InProcess
             TraceEventMonitor.StartListener(instance.HostProcess);
         }
 
+        public static void StopETWListener(VisualStudioInstance instance)
+        {
+            TraceEventMonitor.StopListener();
+        }
+
         public static void WaitForSolutionCrawler(VisualStudioInstance instance)
         {
             var @event = Microsoft.Diagnostics.Tracing.Parsers.RoslynEventSource.FunctionId.WorkCoordinator_AsyncWorkItemQueue_LastItem.ToString();
