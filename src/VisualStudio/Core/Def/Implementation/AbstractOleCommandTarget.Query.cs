@@ -189,9 +189,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
                 case VSConstants.VSStd2KCmdID.BACKTAB:
                     return QueryBackTabStatus(prgCmds);
 
-                case VSConstants.VSStd2KCmdID.ENCAPSULATEFIELD:
-                    return QueryEncapsulateFieldStatus(ref pguidCmdGroup, commandCount, prgCmds, commandText);
-
                 case VSConstants.VSStd2KCmdID.REMOVEPARAMETERS:
                     return QueryRemoveParametersStatus(ref pguidCmdGroup, commandCount, prgCmds, commandText);
 
@@ -445,13 +442,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
         {
             return GetCommandState(
                 (v, b) => new ExecuteInInteractiveCommandArgs(v, b),
-                ref pguidCmdGroup, commandCount, prgCmds, commandText);
-        }
-
-        private int QueryEncapsulateFieldStatus(ref Guid pguidCmdGroup, uint commandCount, OLECMD[] prgCmds, IntPtr commandText)
-        {
-            return GetCommandState(
-                (v, b) => new EncapsulateFieldCommandArgs(v, b),
                 ref pguidCmdGroup, commandCount, prgCmds, commandText);
         }
 

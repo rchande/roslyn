@@ -12,13 +12,17 @@ using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text.Operations;
 using Roslyn.Utilities;
+using EditorCommanding = Microsoft.VisualStudio.Text.UI.Commanding;
+using Microsoft.VisualStudio.Text.UI.Commanding.Commands;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.EncapsulateField
 {
-    internal abstract class AbstractEncapsulateFieldCommandHandler : ICommandHandler<EncapsulateFieldCommandArgs>
+    internal abstract class AbstractEncapsulateFieldCommandHandler : VisualStudio.Text.UI.Commanding.ICommandHandler<EncapsulateFieldCommandArgs>
     {
         private readonly IWaitIndicator _waitIndicator;
         private readonly ITextBufferUndoManagerProvider _undoManager;
+
+        public bool InterestedInReadOnlyBuffer => false;
 
         public AbstractEncapsulateFieldCommandHandler(
             IWaitIndicator waitIndicator,
@@ -26,39 +30,6 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.EncapsulateField
         {
             _waitIndicator = waitIndicator;
             _undoManager = undoManager;
-        }
-
-        public void ExecuteCommand(EncapsulateFieldCommandArgs args, Action nextHandler)
-        {
-            var document = args.SubjectBuffer.CurrentSnapshot.GetOpenDocumentInCurrentContextWithChanges();
-            if (document == null)
-            {
-                nextHandler();
-                return;
-            }
-
-            var workspace = document.Project.Solution.Workspace;
-            var supportsFeatureService = workspace.Services.GetService<IDocumentSupportsFeatureService>();
-            if (!supportsFeatureService.SupportsRefactorings(document))
-            {
-                nextHandler();
-                return;
-            }
-
-            bool executed = false;
-            _waitIndicator.Wait(
-                title: EditorFeaturesResources.Encapsulate_Field,
-                message: EditorFeaturesResources.Applying_Encapsulate_Field_refactoring,
-                allowCancel: true,
-                action: waitContext =>
-            {
-                executed = Execute(args, waitContext);
-            });
-
-            if (!executed)
-            {
-                nextHandler();
-            }
         }
 
         private bool Execute(EncapsulateFieldCommandArgs args, IWaitContext waitContext)
@@ -132,21 +103,48 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.EncapsulateField
             return true;
         }
 
-        public CommandState GetCommandState(EncapsulateFieldCommandArgs args, Func<CommandState> nextHandler)
+        public VisualStudio.Text.UI.Commanding.CommandState GetCommandState(EncapsulateFieldCommandArgs args)
         {
             var document = args.SubjectBuffer.CurrentSnapshot.GetOpenDocumentInCurrentContextWithChanges();
             if (document == null)
             {
-                return nextHandler();
+                return EditorCommanding.CommandState.CommandIsUnavailable;
             }
 
             var supportsFeatureService = document.Project.Solution.Workspace.Services.GetService<IDocumentSupportsFeatureService>();
             if (!supportsFeatureService.SupportsRefactorings(document))
             {
-                return nextHandler();
+                return EditorCommanding.CommandState.CommandIsUnavailable;
             }
 
-            return CommandState.Available;
+            return EditorCommanding.CommandState.CommandIsAvailable;
+        }
+        public bool ExecuteCommand(EncapsulateFieldCommandArgs args)
+        {
+            var document = args.SubjectBuffer.CurrentSnapshot.GetOpenDocumentInCurrentContextWithChanges();
+            if (document == null)
+            {
+                return false;
+            }
+
+            var workspace = document.Project.Solution.Workspace;
+            var supportsFeatureService = workspace.Services.GetService<IDocumentSupportsFeatureService>();
+            if (!supportsFeatureService.SupportsRefactorings(document))
+            {
+                return false;
+            }
+
+            bool executed = false;
+            _waitIndicator.Wait(
+                title: EditorFeaturesResources.Encapsulate_Field,
+                message: EditorFeaturesResources.Applying_Encapsulate_Field_refactoring,
+                allowCancel: true,
+                action: waitContext =>
+                {
+                    executed = Execute(args, waitContext);
+                });
+
+            return executed;
         }
     }
 }

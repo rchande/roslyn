@@ -5,10 +5,12 @@ using Microsoft.CodeAnalysis.Editor.Host;
 using Microsoft.CodeAnalysis.Editor.Implementation.EncapsulateField;
 using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Utilities;
+using EditorCommanding = Microsoft.VisualStudio.Text.UI.Commanding;
+using Microsoft.VisualStudio.Text.UI.Commanding.Commands;
 
 namespace Microsoft.CodeAnalysis.Editor.CSharp.EncapsulateField
 {
-    [ExportCommandHandler(PredefinedCommandHandlerNames.EncapsulateField, ContentTypeNames.CSharpContentType)]
+    [EditorCommanding.ExportCommandHandler(PredefinedCommandHandlerNames.EncapsulateField, ContentTypeNames.CSharpContentType)]
     [Order(After = PredefinedCommandHandlerNames.DocumentationComments)]
     internal class EncapsulateFieldCommandHandler : AbstractEncapsulateFieldCommandHandler
     {

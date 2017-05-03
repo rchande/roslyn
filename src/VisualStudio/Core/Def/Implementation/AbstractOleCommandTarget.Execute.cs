@@ -494,10 +494,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
                     ExecuteViewCallHierarchy(subjectBuffer, contentType, executeNextCommandTarget);
                     break;
 
-                case VSConstants.VSStd2KCmdID.ENCAPSULATEFIELD:
-                    ExecuteEncapsulateField(subjectBuffer, contentType, executeNextCommandTarget);
-                    break;
-
                 case VSConstants.VSStd2KCmdID.REMOVEPARAMETERS:
                     ExecuteRemoveParameters(subjectBuffer, contentType, executeNextCommandTarget);
                     break;
@@ -519,13 +515,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
             }
 
             return result;
-        }
-
-        private void ExecuteEncapsulateField(ITextBuffer subjectBuffer, IContentType contentType, Action executeNextCommandTarget)
-        {
-            CurrentHandlers.Execute(contentType,
-                args: new EncapsulateFieldCommandArgs(ConvertTextView(), subjectBuffer),
-                lastHandler: executeNextCommandTarget);
         }
 
         private void ExecuteRemoveParameters(ITextBuffer subjectBuffer, IContentType contentType, Action executeNextCommandTarget)

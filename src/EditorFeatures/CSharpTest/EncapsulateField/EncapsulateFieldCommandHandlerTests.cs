@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis.Editor.UnitTests.Workspaces;
 using Microsoft.VisualStudio.Text.Operations;
 using Roslyn.Test.Utilities;
 using Xunit;
+using EditorCommands = Microsoft.VisualStudio.Text.UI.Commanding.Commands;
 
 namespace Microsoft.CodeAnalysis.Editor.CSharp.UnitTests.EncapsulateField
 {
@@ -218,7 +219,7 @@ class Program
                     return CommandState.Unavailable;
                 };
 
-                var state = handler.GetCommandState(new Commands.EncapsulateFieldCommandArgs(textView, textView.TextBuffer), nextHandler);
+                var state = handler.GetCommandState(new EditorCommands.EncapsulateFieldCommandArgs(textView, textView.TextBuffer));
                 Assert.True(delegatedToNext);
                 Assert.False(state.IsAvailable);
             }

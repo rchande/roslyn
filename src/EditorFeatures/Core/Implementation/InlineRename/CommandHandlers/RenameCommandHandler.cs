@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis.Editor.Host;
 using Microsoft.CodeAnalysis.Editor.Shared.Extensions;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Utilities;
 
@@ -81,18 +82,23 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.InlineRename
 
         private void CommitIfActiveAndCallNextHandler(CommandArgs args, Action nextHandler)
         {
+            CommitIfActive(args.TextView);
+
+            nextHandler();
+        }
+
+        private void CommitIfActive(ITextView textView)
+        {
             if (_renameService.ActiveSession != null)
             {
-                var selection = args.TextView.Selection.VirtualSelectedSpans.First();
+                var selection = textView.Selection.VirtualSelectedSpans.First();
 
                 _renameService.ActiveSession.Commit();
 
-                var translatedSelection = selection.TranslateTo(args.TextView.TextBuffer.CurrentSnapshot);
-                args.TextView.Selection.Select(translatedSelection.Start, translatedSelection.End);
-                args.TextView.Caret.MoveTo(translatedSelection.End);
+                var translatedSelection = selection.TranslateTo(textView.TextBuffer.CurrentSnapshot);
+                textView.Selection.Select(translatedSelection.Start, translatedSelection.End);
+                textView.Caret.MoveTo(translatedSelection.End);
             }
-
-            nextHandler();
         }
     }
 }

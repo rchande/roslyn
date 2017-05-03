@@ -2,6 +2,9 @@
 
 using System;
 using Microsoft.CodeAnalysis.Editor.Commands;
+using Microsoft.VisualStudio.Text.UI.Commanding;
+using EditorCommands = Microsoft.VisualStudio.Text.UI.Commanding.Commands;
+using EditorCommanding = Microsoft.VisualStudio.Text.UI.Commanding;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.InlineRename
 {
@@ -9,8 +12,10 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.InlineRename
         ICommandHandler<ReorderParametersCommandArgs>,
         ICommandHandler<RemoveParametersCommandArgs>,
         ICommandHandler<ExtractInterfaceCommandArgs>,
-        ICommandHandler<EncapsulateFieldCommandArgs>
+        EditorCommanding.ICommandHandler<EditorCommands.EncapsulateFieldCommandArgs>
     {
+        public bool InterestedInReadOnlyBuffer => throw new NotImplementedException();
+
         public CommandState GetCommandState(ReorderParametersCommandArgs args, Func<CommandState> nextHandler)
         {
             return nextHandler();
@@ -41,14 +46,11 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.InlineRename
             CommitIfActiveAndCallNextHandler(args, nextHandler);
         }
 
-        public CommandState GetCommandState(EncapsulateFieldCommandArgs args, Func<CommandState> nextHandler)
+        public VisualStudio.Text.UI.Commanding.CommandState GetCommandState(EditorCommands.EncapsulateFieldCommandArgs args) => EditorCommanding.CommandState.CommandIsUnavailable;
+        public bool ExecuteCommand(EditorCommands.EncapsulateFieldCommandArgs args)
         {
-            return nextHandler();
-        }
-
-        public void ExecuteCommand(EncapsulateFieldCommandArgs args, Action nextHandler)
-        {
-            CommitIfActiveAndCallNextHandler(args, nextHandler);
+            CommitIfActive(args.TextView);
+            return false;
         }
     }
 }

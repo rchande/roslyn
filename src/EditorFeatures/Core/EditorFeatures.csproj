@@ -164,7 +164,6 @@
     <Compile Include="Commands\DocumentEndCommandArgs.cs" />
     <Compile Include="Commands\DocumentStartCommandArgs.cs" />
     <Compile Include="Commands\DownKeyCommandArgs.cs" />
-    <Compile Include="Commands\EncapsulateFieldCommandArgs.cs" />
     <Compile Include="Commands\EscapeKeyCommandArgs.cs" />
     <Compile Include="Commands\ExecuteInInteractiveCommandArgs.cs" />
     <Compile Include="Commands\ExtractInterfaceCommandArgs.cs" />
