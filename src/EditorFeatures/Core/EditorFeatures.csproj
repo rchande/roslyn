@@ -166,7 +166,6 @@
     <Compile Include="Commands\DownKeyCommandArgs.cs" />
     <Compile Include="Commands\EscapeKeyCommandArgs.cs" />
     <Compile Include="Commands\ExecuteInInteractiveCommandArgs.cs" />
-    <Compile Include="Commands\ExtractInterfaceCommandArgs.cs" />
     <Compile Include="Commands\ExtractMethodCommandArgs.cs" />
     <Compile Include="Commands\FindReferencesCommandArgs.cs" />
     <Compile Include="Commands\FormatDocumentCommandArgs.cs" />

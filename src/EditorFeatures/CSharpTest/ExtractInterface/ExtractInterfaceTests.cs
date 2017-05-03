@@ -1087,7 +1087,7 @@ class $$Test<T, U>
                     return CommandState.Unavailable;
                 };
 
-                var state = handler.GetCommandState(new Commands.ExtractInterfaceCommandArgs(textView, textView.TextBuffer), nextHandler);
+                var state = handler.GetCommandState(new Microsoft.VisualStudio.Text.UI.Commanding.Commands.ExtractInterfaceCommandArgs(textView, textView.TextBuffer));
                 Assert.True(delegatedToNext);
                 Assert.False(state.IsAvailable);
             }

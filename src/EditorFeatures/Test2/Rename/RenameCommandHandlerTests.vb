@@ -1120,7 +1120,7 @@ partial class [|Program|]
         Public Sub ExtractInterfaceDuringRename()
             VerifyCommandCommitsRenameSessionAndExecutesCommand(
                 Sub(commandHandler As RenameCommandHandler, view As IWpfTextView, nextHandler As Action)
-                    commandHandler.ExecuteCommand(New ExtractInterfaceCommandArgs(view, view.TextBuffer), nextHandler)
+                    commandHandler.ExecuteCommand(New Microsoft.VisualStudio.Text.UI.Commanding.Commands.ExtractInterfaceCommandArgs(view, view.TextBuffer))
                 End Sub)
         End Sub
 

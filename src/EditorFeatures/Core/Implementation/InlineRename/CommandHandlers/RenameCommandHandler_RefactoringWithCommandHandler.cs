@@ -11,7 +11,7 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.InlineRename
     internal partial class RenameCommandHandler :
         ICommandHandler<ReorderParametersCommandArgs>,
         ICommandHandler<RemoveParametersCommandArgs>,
-        ICommandHandler<ExtractInterfaceCommandArgs>,
+        EditorCommanding.ICommandHandler<EditorCommands.ExtractInterfaceCommandArgs>,
         EditorCommanding.ICommandHandler<EditorCommands.EncapsulateFieldCommandArgs>
     {
         public bool InterestedInReadOnlyBuffer => throw new NotImplementedException();
@@ -36,14 +36,15 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.InlineRename
             CommitIfActiveAndCallNextHandler(args, nextHandler);
         }
 
-        public CommandState GetCommandState(ExtractInterfaceCommandArgs args, Func<CommandState> nextHandler)
+        public EditorCommanding.CommandState GetCommandState(EditorCommands.ExtractInterfaceCommandArgs args)
         {
-            return nextHandler();
+            return EditorCommanding.CommandState.CommandIsUnavailable;
         }
 
-        public void ExecuteCommand(ExtractInterfaceCommandArgs args, Action nextHandler)
+        public bool ExecuteCommand(EditorCommands.ExtractInterfaceCommandArgs args)
         {
-            CommitIfActiveAndCallNextHandler(args, nextHandler);
+            CommitIfActive(args.TextView);
+            return false;
         }
 
         public VisualStudio.Text.UI.Commanding.CommandState GetCommandState(EditorCommands.EncapsulateFieldCommandArgs args) => EditorCommanding.CommandState.CommandIsUnavailable;
