@@ -13,6 +13,8 @@ Imports Microsoft.VisualStudio.Text
 Imports Microsoft.VisualStudio.Text.Editor
 Imports Microsoft.VisualStudio.Text.Operations
 Imports Microsoft.VisualStudio.Utilities
+Imports EditorCommands = Microsoft.VisualStudio.Text.UI.Commanding.Commands
+Imports EditorCommanding = Microsoft.VisualStudio.Text.UI.Commanding
 
 Namespace Microsoft.CodeAnalysis.Editor.VisualBasic.LineCommit
     ''' <summary>
@@ -28,7 +30,7 @@ Namespace Microsoft.CodeAnalysis.Editor.VisualBasic.LineCommit
         Implements ICommandHandler(Of ReturnKeyCommandArgs)
         Implements ICommandHandler(Of PasteCommandArgs)
         Implements ICommandHandler(Of SaveCommandArgs)
-        Implements ICommandHandler(Of FormatDocumentCommandArgs)
+        Implements EditorCommanding.ICommandHandler(Of EditorCommands.FormatDocumentCommandArgs)
         Implements ICommandHandler(Of FormatSelectionCommandArgs)
 
         Private ReadOnly _bufferManagerFactory As CommitBufferManagerFactory
@@ -52,12 +54,20 @@ Namespace Microsoft.CodeAnalysis.Editor.VisualBasic.LineCommit
             _waitIndicator = waitIndicator
         End Sub
 
-        Public Sub ExecuteCommand(args As FormatDocumentCommandArgs, nextHandler As Action) Implements ICommandHandler(Of FormatDocumentCommandArgs).ExecuteCommand
+        ReadOnly Property InterestedInReadonlyBuffer As Boolean Implements EditorCommanding.ICommandHandler(Of EditorCommands.FormatDocumentCommandArgs).InterestedInReadOnlyBuffer
+            Get
+                Return False
+            End Get
+        End Property
+
+        Public Function ExecuteCommand(args As EditorCommands.FormatDocumentCommandArgs) As Boolean _
+            Implements EditorCommanding.ICommandHandler(Of EditorCommands.FormatDocumentCommandArgs).ExecuteCommand
+
             If Not args.SubjectBuffer.CanApplyChangeDocumentToWorkspace() Then
-                nextHandler()
-                Return
+                Return False
             End If
 
+            Dim result = False
             _waitIndicator.Wait(
                 VBEditorResources.Format_Document,
                 VBEditorResources.Formatting_Document,
@@ -71,11 +81,15 @@ Namespace Microsoft.CodeAnalysis.Editor.VisualBasic.LineCommit
                     Dim commitBufferManager = _bufferManagerFactory.CreateForBuffer(buffer)
                     commitBufferManager.ExpandDirtyRegion(wholeFile)
                     commitBufferManager.CommitDirty(isExplicitFormat:=True, cancellationToken:=waitContext.CancellationToken)
+                    result = True
                 End Sub)
-        End Sub
 
-        Public Function GetCommandState(args As FormatDocumentCommandArgs, nextHandler As Func(Of CommandState)) As CommandState Implements ICommandHandler(Of FormatDocumentCommandArgs).GetCommandState
-            Return nextHandler()
+            Return result
+        End Function
+
+        Public Function GetCommandState(args As EditorCommands.FormatDocumentCommandArgs) As EditorCommanding.CommandState _
+            Implements EditorCommanding.ICommandHandler(Of EditorCommands.FormatDocumentCommandArgs).GetCommandState
+            Return EditorCommanding.CommandState.CommandIsUnavailable
         End Function
 
         Public Sub ExecuteCommand(args As FormatSelectionCommandArgs, nextHandler As Action) Implements ICommandHandler(Of FormatSelectionCommandArgs).ExecuteCommand

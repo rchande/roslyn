@@ -15,7 +15,7 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.Formatting
     {
         public CommandState GetCommandState(FormatSelectionCommandArgs args, Func<CommandState> nextHandler)
         {
-            return GetCommandState(args.SubjectBuffer, nextHandler);
+            return args.SubjectBuffer.CanApplyChangeDocumentToWorkspace() ? CommandState.Available : CommandState.Unavailable;
         }
 
         public void ExecuteCommand(FormatSelectionCommandArgs args, Action nextHandler)

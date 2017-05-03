@@ -18,6 +18,8 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Utilities;
 using Roslyn.Utilities;
+using EditorCommanding = Microsoft.VisualStudio.Text.UI.Commanding;
+using EditorCommands = Microsoft.VisualStudio.Text.UI.Commanding.Commands;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.Formatting
 {
@@ -25,7 +27,7 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.Formatting
     [Order(After = PredefinedCommandHandlerNames.Rename)]
     [Order(Before = PredefinedCommandHandlerNames.Completion)]
     internal partial class FormatCommandHandler :
-        ICommandHandler<FormatDocumentCommandArgs>,
+        EditorCommanding.ICommandHandler<EditorCommands.FormatDocumentCommandArgs>,
         ICommandHandler<FormatSelectionCommandArgs>,
         ICommandHandler<PasteCommandArgs>,
         ICommandHandler<TypeCharCommandArgs>,
@@ -34,6 +36,8 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.Formatting
         private readonly IWaitIndicator _waitIndicator;
         private readonly ITextUndoHistoryRegistry _undoHistoryRegistry;
         private readonly IEditorOperationsFactoryService _editorOperationsFactoryService;
+
+        public bool InterestedInReadOnlyBuffer => false;
 
         [ImportingConstructor]
         public FormatCommandHandler(
@@ -79,14 +83,14 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.Formatting
             }
         }
 
-        private static CommandState GetCommandState(ITextBuffer buffer, Func<CommandState> nextHandler)
+        private static EditorCommanding.CommandState GetCommandState(ITextBuffer buffer)
         {
             if (!buffer.CanApplyChangeDocumentToWorkspace())
             {
-                return nextHandler();
+                return EditorCommanding.CommandState.CommandIsUnavailable;
             }
 
-            return CommandState.Available;
+            return EditorCommanding.CommandState.CommandIsAvailable;
         }
 
         public void ExecuteReturnOrTypeCommand(CommandArgs args, Action nextHandler, CancellationToken cancellationToken)

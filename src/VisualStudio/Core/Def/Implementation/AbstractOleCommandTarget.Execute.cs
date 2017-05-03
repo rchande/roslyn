@@ -401,10 +401,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
                     ExecuteWordDeleteToEnd(subjectBuffer, contentType, executeNextCommandTarget);
                     break;
 
-                case VSConstants.VSStd2KCmdID.FORMATDOCUMENT:
-                    ExecuteFormatDocument(subjectBuffer, contentType, executeNextCommandTarget);
-                    break;
-
                 case VSConstants.VSStd2KCmdID.FORMATSELECTION:
                     ExecuteFormatSelection(subjectBuffer, contentType, executeNextCommandTarget);
                     break;
@@ -670,13 +666,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
         {
             CurrentHandlers.Execute(contentType,
                 args: new InsertCommentCommandArgs(ConvertTextView(), subjectBuffer),
-                lastHandler: executeNextCommandTarget);
-        }
-
-        protected void ExecuteFormatDocument(ITextBuffer subjectBuffer, IContentType contentType, Action executeNextCommandTarget)
-        {
-            CurrentHandlers.Execute(contentType,
-                args: new FormatDocumentCommandArgs(ConvertTextView(), subjectBuffer),
                 lastHandler: executeNextCommandTarget);
         }
 
