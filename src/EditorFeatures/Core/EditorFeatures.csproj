@@ -150,7 +150,6 @@
     <Compile Include="CommandHandlers\QuickInfoCommandHandlerAndSourceProvider.QuickInfoSource.cs" />
     <Compile Include="CommandHandlers\SignatureHelpCommandHandler.cs" />
     <Compile Include="Commands\GoToImplementationCommandArgs.cs" />
-    <Compile Include="Commands\GoToAdjacentMemberCommandArgs.cs" />
     <Compile Include="Commands\MoveSelectedLinesDownCommandArgs.cs" />
     <Compile Include="Commands\MoveSelectedLinesUpCommandArgs.cs" />
     <Compile Include="Commands\AutomaticLineEnderCommandArgs.cs" />
@@ -173,7 +172,6 @@
     <Compile Include="Commands\FindReferencesCommandArgs.cs" />
     <Compile Include="Commands\FormatDocumentCommandArgs.cs" />
     <Compile Include="Commands\FormatSelectionCommandArgs.cs" />
-    <Compile Include="Commands\GoToDefinitionCommandArgs.cs" />
     <Compile Include="Commands\InsertCommentCommandArgs.cs" />
     <Compile Include="Commands\InsertSnippetCommandArgs.cs" />
     <Compile Include="Commands\InvokeCompletionListCommandArgs.cs" />
