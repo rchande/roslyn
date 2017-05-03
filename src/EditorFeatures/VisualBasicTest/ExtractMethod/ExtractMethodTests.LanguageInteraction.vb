@@ -3393,7 +3393,7 @@ End Namespace"
                         Return CommandState.Unavailable
                     End Function
 
-                    Dim state = handler.GetCommandState(New Commands.ExtractMethodCommandArgs(textView, textView.TextBuffer), nextHandler)
+                    Dim state = handler.GetCommandState(New Microsoft.VisualStudio.Text.UI.Commanding.Commands.ExtractMethodCommandArgs(textView, textView.TextBuffer))
                     Assert.True(delegatedToNext)
                     Assert.False(state.IsAvailable)
                 End Using

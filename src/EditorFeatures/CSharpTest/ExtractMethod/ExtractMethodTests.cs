@@ -10138,7 +10138,7 @@ namespace ClassLibrary9
                     return CommandState.Unavailable;
                 };
 
-                var state = handler.GetCommandState(new Commands.ExtractMethodCommandArgs(textView, textView.TextBuffer), nextHandler);
+                var state = handler.GetCommandState(new Microsoft.VisualStudio.Text.UI.Commanding.Commands.ExtractMethodCommandArgs(textView, textView.TextBuffer));
                 Assert.True(delegatedToNext);
                 Assert.False(state.IsAvailable);
             }

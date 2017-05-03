@@ -465,11 +465,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
                     ExecuteRename(subjectBuffer, contentType, executeNextCommandTarget);
                     break;
 
-                case VSConstants.VSStd2KCmdID.EXTRACTMETHOD:
-                    GCManager.UseLowLatencyModeForProcessingUserInput();
-                    ExecuteExtractMethod(subjectBuffer, contentType, executeNextCommandTarget);
-                    break;
-
                 case VSConstants.VSStd2KCmdID.PASTE:
                     GCManager.UseLowLatencyModeForProcessingUserInput();
                     ExecutePaste(subjectBuffer, contentType, executeNextCommandTarget);
@@ -581,13 +576,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
         {
             CurrentHandlers.Execute(contentType,
                 args: new AutomaticLineEnderCommandArgs(ConvertTextView(), subjectBuffer),
-                lastHandler: executeNextCommandTarget);
-        }
-
-        protected void ExecuteExtractMethod(ITextBuffer subjectBuffer, IContentType contentType, Action executeNextCommandTarget)
-        {
-            CurrentHandlers.Execute(contentType,
-                args: new ExtractMethodCommandArgs(ConvertTextView(), subjectBuffer),
                 lastHandler: executeNextCommandTarget);
         }
 

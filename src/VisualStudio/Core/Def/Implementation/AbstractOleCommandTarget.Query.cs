@@ -171,9 +171,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
                 case VSConstants.VSStd2KCmdID.RENAME:
                     return QueryRenameStatus(ref pguidCmdGroup, commandCount, prgCmds, commandText);
 
-                case VSConstants.VSStd2KCmdID.EXTRACTMETHOD:
-                    return QueryExtractMethodStatus(ref pguidCmdGroup, commandCount, prgCmds, commandText);
-
                 case CmdidContextMenuViewCallHierarchy:
                     return QueryViewCallHierarchyStatus(ref pguidCmdGroup, commandCount, prgCmds, commandText);
 
@@ -270,13 +267,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
         {
             prgCmds[0].cmdf = (uint)(OLECMDF.OLECMDF_ENABLED | OLECMDF.OLECMDF_SUPPORTED | OLECMDF.OLECMDF_INVISIBLE);
             return VSConstants.S_OK;
-        }
-
-        private int QueryExtractMethodStatus(ref Guid pguidCmdGroup, uint commandCount, OLECMD[] prgCmds, IntPtr commandText)
-        {
-            return GetCommandState(
-                (v, b) => new ExtractMethodCommandArgs(v, b),
-                ref pguidCmdGroup, commandCount, prgCmds, commandText);
         }
 
         private int QueryGoToDefinitionStatus(OLECMD[] prgCmds)
