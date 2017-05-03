@@ -163,10 +163,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
 
             switch ((VSConstants.VSStd97CmdID)commandId)
             {
-                case VSConstants.VSStd97CmdID.FindReferences:
-                    ExecuteFindReferences(subjectBuffer, contentType, executeNextCommandTarget);
-                    break;
-
                 case VSConstants.VSStd97CmdID.SyncClassView:
                     ExecuteSyncClassView(subjectBuffer, contentType, executeNextCommandTarget);
                     break;
@@ -864,13 +860,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
         {
             CurrentHandlers.Execute(contentType,
                 args: new GoToImplementationCommandArgs(ConvertTextView(), subjectBuffer),
-                lastHandler: executeNextCommandTarget);
-        }
-
-        private void ExecuteFindReferences(ITextBuffer subjectBuffer, IContentType contentType, Action executeNextCommandTarget)
-        {
-            CurrentHandlers.Execute(contentType,
-                args: new FindReferencesCommandArgs(ConvertTextView(), subjectBuffer),
                 lastHandler: executeNextCommandTarget);
         }
 
