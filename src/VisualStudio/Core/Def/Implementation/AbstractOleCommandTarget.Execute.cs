@@ -401,10 +401,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
                     ExecuteWordDeleteToEnd(subjectBuffer, contentType, executeNextCommandTarget);
                     break;
 
-                case VSConstants.VSStd2KCmdID.FORMATSELECTION:
-                    ExecuteFormatSelection(subjectBuffer, contentType, executeNextCommandTarget);
-                    break;
-
                 case VSConstants.VSStd2KCmdID.ECMD_INSERTCOMMENT:
                     GCManager.UseLowLatencyModeForProcessingUserInput();
                     ExecuteInsertComment(subjectBuffer, contentType, executeNextCommandTarget);
@@ -666,13 +662,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
         {
             CurrentHandlers.Execute(contentType,
                 args: new InsertCommentCommandArgs(ConvertTextView(), subjectBuffer),
-                lastHandler: executeNextCommandTarget);
-        }
-
-        protected void ExecuteFormatSelection(ITextBuffer subjectBuffer, IContentType contentType, Action executeNextCommandTarget)
-        {
-            CurrentHandlers.Execute(contentType,
-                args: new FormatSelectionCommandArgs(ConvertTextView(), subjectBuffer),
                 lastHandler: executeNextCommandTarget);
         }
 

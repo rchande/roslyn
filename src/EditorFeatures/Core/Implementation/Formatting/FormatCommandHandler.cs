@@ -28,7 +28,7 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.Formatting
     [Order(Before = PredefinedCommandHandlerNames.Completion)]
     internal partial class FormatCommandHandler :
         EditorCommanding.ICommandHandler<EditorCommands.FormatDocumentCommandArgs>,
-        ICommandHandler<FormatSelectionCommandArgs>,
+        EditorCommanding.ICommandHandler<EditorCommands.FormatSelectionCommandArgs>,
         ICommandHandler<PasteCommandArgs>,
         ICommandHandler<TypeCharCommandArgs>,
         ICommandHandler<ReturnKeyCommandArgs>
