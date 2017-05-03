@@ -272,17 +272,7 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
                 result = NextCommandTarget.Exec(ref guidCmdGroup, commandId, executeInformation, pvaIn, pvaOut);
             };
 
-            switch (commandId)
-            {
-                case ID.RoslynCommands.GoToImplementation:
-                    ExecuteGoToImplementation(subjectBuffer, contentType, executeNextCommandTarget);
-                    break;
-
-                default:
-                    return NextCommandTarget.Exec(ref pguidCmdGroup, commandId, executeInformation, pvaIn, pvaOut);
-            }
-
-            return result;
+            return NextCommandTarget.Exec(ref pguidCmdGroup, commandId, executeInformation, pvaIn, pvaOut);
         }
 
         protected virtual int ExecuteVisualStudio2000(ref Guid pguidCmdGroup, uint commandId, uint executeInformation, IntPtr pvaIn, IntPtr pvaOut, ITextBuffer subjectBuffer, IContentType contentType)
@@ -809,13 +799,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
             var typedChar = (char)(ushort)Marshal.GetObjectForNativeVariant(pvaIn);
             CurrentHandlers.Execute(contentType,
                 args: new TypeCharCommandArgs(ConvertTextView(), subjectBuffer, typedChar),
-                lastHandler: executeNextCommandTarget);
-        }
-
-        private void ExecuteGoToImplementation(ITextBuffer subjectBuffer, IContentType contentType, Action executeNextCommandTarget)
-        {
-            CurrentHandlers.Execute(contentType,
-                args: new GoToImplementationCommandArgs(ConvertTextView(), subjectBuffer),
                 lastHandler: executeNextCommandTarget);
         }
 
