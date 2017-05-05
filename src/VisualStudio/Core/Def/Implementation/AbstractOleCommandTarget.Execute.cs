@@ -393,14 +393,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
                     ExecuteToggleConsumeFirstMode(subjectBuffer, contentType, executeNextCommandTarget);
                     break;
 
-                case CmdidNextHighlightedReference:
-                    ExecuteNextHighlightedReference(subjectBuffer, contentType, executeNextCommandTarget);
-                    break;
-
-                case CmdidPreviousHighlightedReference:
-                    ExecutePreviousHighlightedReference(subjectBuffer, contentType, executeNextCommandTarget);
-                    break;
-
                 case VSConstants.VSStd2KCmdID.COMMENTBLOCK:
                 case VSConstants.VSStd2KCmdID.COMMENT_BLOCK:
                     ExecuteCommentBlock(subjectBuffer, contentType, executeNextCommandTarget);
@@ -581,20 +573,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
         {
             CurrentHandlers.Execute(contentType,
                 args: new CommentSelectionCommandArgs(ConvertTextView(), subjectBuffer),
-                lastHandler: executeNextCommandTarget);
-        }
-
-        protected void ExecutePreviousHighlightedReference(ITextBuffer subjectBuffer, IContentType contentType, Action executeNextCommandTarget)
-        {
-            CurrentHandlers.Execute(contentType,
-                args: new NavigateToHighlightedReferenceCommandArgs(ConvertTextView(), subjectBuffer, NavigateDirection.Up),
-                lastHandler: executeNextCommandTarget);
-        }
-
-        protected void ExecuteNextHighlightedReference(ITextBuffer subjectBuffer, IContentType contentType, Action executeNextCommandTarget)
-        {
-            CurrentHandlers.Execute(contentType,
-                args: new NavigateToHighlightedReferenceCommandArgs(ConvertTextView(), subjectBuffer, NavigateDirection.Down),
                 lastHandler: executeNextCommandTarget);
         }
 

@@ -172,7 +172,6 @@
     <Compile Include="Commands\LineEndExtendCommandArgs.cs" />
     <Compile Include="Commands\LineStartCommandArgs.cs" />
     <Compile Include="Commands\LineStartExtendCommandArgs.cs" />
-    <Compile Include="Commands\NavigateToHighlightedReferenceCommandArgs.cs" />
     <Compile Include="Commands\OpenLineBelowCommandArgs.cs" />
     <Compile Include="Commands\OrganizeDocumentCommandArgs.cs" />
     <Compile Include="Commands\PageDownKeyCommandArgs.cs" />

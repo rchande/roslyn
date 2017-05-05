@@ -1080,7 +1080,7 @@ partial class [|Program|]
         Public Sub MoveSelectedLinesUpDuringRename()
             VerifyCommandCommitsRenameSessionAndExecutesCommand(
                 Sub(commandHandler As RenameCommandHandler, view As IWpfTextView, nextHandler As Action)
-                    commandHandler.ExecuteCommand(New MoveSelectedLinesUpCommandArgs(view, view.TextBuffer), nextHandler)
+                    commandHandler.ExecuteCommand(New Microsoft.VisualStudio.Text.UI.Commanding.Commands.MoveSelectedLinesUpCommandArgs(view, view.TextBuffer))
                 End Sub)
         End Sub
 
@@ -1090,7 +1090,7 @@ partial class [|Program|]
         Public Sub MoveSelectedLinesDownDuringRename()
             VerifyCommandCommitsRenameSessionAndExecutesCommand(
                 Sub(commandHandler As RenameCommandHandler, view As IWpfTextView, nextHandler As Action)
-                    commandHandler.ExecuteCommand(New MoveSelectedLinesDownCommandArgs(view, view.TextBuffer), nextHandler)
+                    commandHandler.ExecuteCommand(New Microsoft.VisualStudio.Text.UI.Commanding.Commands.MoveSelectedLinesDownCommandArgs(view, view.TextBuffer))
                 End Sub)
         End Sub
 
