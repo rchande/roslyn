@@ -149,8 +149,6 @@
     <Compile Include="CommandHandlers\QuickInfoCommandHandlerAndSourceProvider.cs" />
     <Compile Include="CommandHandlers\QuickInfoCommandHandlerAndSourceProvider.QuickInfoSource.cs" />
     <Compile Include="CommandHandlers\SignatureHelpCommandHandler.cs" />
-    <Compile Include="Commands\MoveSelectedLinesDownCommandArgs.cs" />
-    <Compile Include="Commands\MoveSelectedLinesUpCommandArgs.cs" />
     <Compile Include="Commands\AutomaticLineEnderCommandArgs.cs" />
     <Compile Include="Commands\BackspaceKeyCommandArgs.cs" />
     <Compile Include="Commands\BackTabKeyCommandArgs.cs" />

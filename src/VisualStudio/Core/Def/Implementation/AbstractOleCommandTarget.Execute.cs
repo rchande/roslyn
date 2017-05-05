@@ -137,13 +137,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
 
             switch ((VSConstants.VSStd12CmdID)commandId)
             {
-                case VSConstants.VSStd12CmdID.MoveSelLinesDown:
-                    ExecuteMoveSelectedLinesDown(subjectBuffer, contentType, executeNextCommandTarget);
-                    break;
-
-                case VSConstants.VSStd12CmdID.MoveSelLinesUp:
-                    ExecuteMoveSelectedLinesUp(subjectBuffer, contentType, executeNextCommandTarget);
-                    break;
 
                 default:
                     return NextCommandTarget.Exec(ref pguidCmdGroup, commandId, executeInformation, pvaIn, pvaOut);
@@ -512,20 +505,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
             }
 
             return result;
-        }
-
-        private void ExecuteMoveSelectedLinesUp(ITextBuffer subjectBuffer, IContentType contentType, Action executeNextCommandTarget)
-        {
-            CurrentHandlers.Execute(contentType,
-                args: new MoveSelectedLinesUpCommandArgs(ConvertTextView(), subjectBuffer),
-                lastHandler: executeNextCommandTarget);
-        }
-
-        private void ExecuteMoveSelectedLinesDown(ITextBuffer subjectBuffer, IContentType contentType, Action executeNextCommandTarget)
-        {
-            CurrentHandlers.Execute(contentType,
-                args: new MoveSelectedLinesDownCommandArgs(ConvertTextView(), subjectBuffer),
-                lastHandler: executeNextCommandTarget);
         }
 
         private void ExecuteAutomaticLineEnder(ITextBuffer subjectBuffer, IContentType contentType, Action executeNextCommandTarget)
