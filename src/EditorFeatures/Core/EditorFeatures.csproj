@@ -188,7 +188,6 @@
     <Compile Include="Commands\SelectAllCommandArgs.cs" />
     <Compile Include="Commands\SortAndRemoveUnnecessaryImportsCommandArgs.cs" />
     <Compile Include="Commands\SurroundWithCommandArgs.cs" />
-    <Compile Include="Commands\SyncClassViewCommandArgs.cs" />
     <Compile Include="Commands\TabKeyCommandArgs.cs" />
     <Compile Include="Commands\ToggleCompletionModeCommandArgs.cs" />
     <Compile Include="Commands\TypeCharCommandArgs.cs" />
