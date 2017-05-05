@@ -439,10 +439,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
                     ExecuteSurroundWith(subjectBuffer, contentType, executeNextCommandTarget);
                     break;
 
-                case VSConstants.VSStd2KCmdID.ViewCallHierarchy:
-                    ExecuteViewCallHierarchy(subjectBuffer, contentType, executeNextCommandTarget);
-                    break;
-
                 case VSConstants.VSStd2KCmdID.REMOVEPARAMETERS:
                     ExecuteRemoveParameters(subjectBuffer, contentType, executeNextCommandTarget);
                     break;
@@ -499,13 +495,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
         {
             CurrentHandlers.Execute(contentType,
                 args: new AutomaticLineEnderCommandArgs(ConvertTextView(), subjectBuffer),
-                lastHandler: executeNextCommandTarget);
-        }
-
-        protected void ExecuteViewCallHierarchy(ITextBuffer subjectBuffer, IContentType contentType, Action executeNextCommandTarget)
-        {
-            CurrentHandlers.Execute(contentType,
-                args: new ViewCallHierarchyCommandArgs(ConvertTextView(), subjectBuffer),
                 lastHandler: executeNextCommandTarget);
         }
 

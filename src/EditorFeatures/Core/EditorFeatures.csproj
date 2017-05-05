@@ -194,7 +194,6 @@
     <Compile Include="Commands\UncommentSelectionCommandArgs.cs" />
     <Compile Include="Commands\UndoCommandArgs.cs" />
     <Compile Include="Commands\UpKeyCommandArgs.cs" />
-    <Compile Include="Commands\ViewCallHierarchyCommandArgs.cs" />
     <Compile Include="Commands\WordDeleteToEndCommandArgs.cs" />
     <Compile Include="Commands\WordDeleteToStartCommandArgs.cs" />
     <Compile Include="CommandState.cs" />
