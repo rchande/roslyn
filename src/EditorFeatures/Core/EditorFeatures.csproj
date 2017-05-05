@@ -152,7 +152,6 @@
     <Compile Include="Commands\AutomaticLineEnderCommandArgs.cs" />
     <Compile Include="Commands\BackspaceKeyCommandArgs.cs" />
     <Compile Include="Commands\BackTabKeyCommandArgs.cs" />
-    <Compile Include="Commands\CommentSelectionCommandArgs.cs" />
     <Compile Include="Commands\CommitUniqueCompletionListItemCommandArgs.cs" />
     <Compile Include="Commands\CopyCommandArgs.cs" />
     <Compile Include="Commands\CopyToInteractiveCommandArgs.cs" />
@@ -191,7 +190,6 @@
     <Compile Include="Commands\TabKeyCommandArgs.cs" />
     <Compile Include="Commands\ToggleCompletionModeCommandArgs.cs" />
     <Compile Include="Commands\TypeCharCommandArgs.cs" />
-    <Compile Include="Commands\UncommentSelectionCommandArgs.cs" />
     <Compile Include="Commands\UndoCommandArgs.cs" />
     <Compile Include="Commands\UpKeyCommandArgs.cs" />
     <Compile Include="Commands\WordDeleteToEndCommandArgs.cs" />
