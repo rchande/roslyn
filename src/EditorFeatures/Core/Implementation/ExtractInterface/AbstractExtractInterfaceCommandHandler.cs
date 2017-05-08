@@ -10,35 +10,35 @@ using Microsoft.CodeAnalysis.Navigation;
 using Microsoft.CodeAnalysis.Notification;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Text;
-using EditorCommanding = Microsoft.VisualStudio.Text.UI.Commanding;
-using EditorCommands = Microsoft.VisualStudio.Text.UI.Commanding.Commands;
+using Microsoft.VisualStudio.Text.UI.Commanding.Commands;
+using VSC = Microsoft.VisualStudio.Text.UI.Commanding;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.ExtractInterface
 {
-    internal abstract class AbstractExtractInterfaceCommandHandler : EditorCommanding.ICommandHandler<EditorCommands.ExtractInterfaceCommandArgs>
+    internal abstract class AbstractExtractInterfaceCommandHandler : VSC.ICommandHandler<ExtractInterfaceCommandArgs>
     {
         public bool InterestedInReadOnlyBuffer => false;
 
-        public EditorCommanding.CommandState GetCommandState(EditorCommands.ExtractInterfaceCommandArgs args)
+        public VSC.CommandState GetCommandState(ExtractInterfaceCommandArgs args)
         {
             var document = args.SubjectBuffer.CurrentSnapshot.GetOpenDocumentInCurrentContextWithChanges();
             if (document == null ||
                 !document.Project.Solution.Workspace.CanApplyChange(ApplyChangesKind.AddDocument) ||
                 !document.Project.Solution.Workspace.CanApplyChange(ApplyChangesKind.ChangeDocument))
             {
-                return EditorCommanding.CommandState.CommandIsUnavailable;
+                return VSC.CommandState.CommandIsUnavailable;
             }
 
             var supportsFeatureService = document.Project.Solution.Workspace.Services.GetService<IDocumentSupportsFeatureService>();
             if (!supportsFeatureService.SupportsRefactorings(document))
             {
-                return EditorCommanding.CommandState.CommandIsUnavailable;
+                return VSC.CommandState.CommandIsUnavailable;
             }
 
-            return EditorCommanding.CommandState.CommandIsAvailable; ;
+            return VSC.CommandState.CommandIsAvailable; ;
         }
 
-        public bool ExecuteCommand(EditorCommands.ExtractInterfaceCommandArgs args)
+        public bool ExecuteCommand(ExtractInterfaceCommandArgs args)
         {
             var document = args.SubjectBuffer.CurrentSnapshot.GetOpenDocumentInCurrentContextWithChanges();
             if (document == null)

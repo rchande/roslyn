@@ -18,8 +18,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Utilities;
 using Roslyn.Utilities;
-using EditorCommanding = Microsoft.VisualStudio.Text.UI.Commanding;
-using EditorCommands = Microsoft.VisualStudio.Text.UI.Commanding.Commands;
+using VSC = Microsoft.VisualStudio.Text.UI.Commanding;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.Formatting
 {
@@ -27,8 +26,8 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.Formatting
     [Order(After = PredefinedCommandHandlerNames.Rename)]
     [Order(Before = PredefinedCommandHandlerNames.Completion)]
     internal partial class FormatCommandHandler :
-        EditorCommanding.ICommandHandler<EditorCommands.FormatDocumentCommandArgs>,
-        EditorCommanding.ICommandHandler<EditorCommands.FormatSelectionCommandArgs>,
+        VSC.ICommandHandler<VSC.Commands.FormatDocumentCommandArgs>,
+        VSC.ICommandHandler<VSC.Commands.FormatSelectionCommandArgs>,
         ICommandHandler<PasteCommandArgs>,
         ICommandHandler<TypeCharCommandArgs>,
         ICommandHandler<ReturnKeyCommandArgs>
@@ -83,14 +82,14 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.Formatting
             }
         }
 
-        private static EditorCommanding.CommandState GetCommandState(ITextBuffer buffer)
+        private static VSC.CommandState GetCommandState(ITextBuffer buffer)
         {
             if (!buffer.CanApplyChangeDocumentToWorkspace())
             {
-                return EditorCommanding.CommandState.CommandIsUnavailable;
+                return VSC.CommandState.CommandIsUnavailable;
             }
 
-            return EditorCommanding.CommandState.CommandIsAvailable;
+            return VSC.CommandState.CommandIsAvailable;
         }
 
         public void ExecuteReturnOrTypeCommand(CommandArgs args, Action nextHandler, CancellationToken cancellationToken)

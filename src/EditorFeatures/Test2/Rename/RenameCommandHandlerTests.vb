@@ -12,7 +12,7 @@ Imports Microsoft.CodeAnalysis.Text.Shared.Extensions
 Imports Microsoft.VisualStudio.Text
 Imports Microsoft.VisualStudio.Text.Editor
 Imports Microsoft.VisualStudio.Text.Operations
-Imports EditorCommands = Microsoft.VisualStudio.Text.UI.Commanding.Commands
+Imports VSC = Microsoft.VisualStudio.Text.UI.Commanding.Commands
 
 
 Namespace Microsoft.CodeAnalysis.Editor.UnitTests.Rename
@@ -1100,7 +1100,7 @@ partial class [|Program|]
         Public Sub ReorderParametersDuringRename()
             VerifyCommandCommitsRenameSessionAndExecutesCommand(
                 Sub(commandHandler As RenameCommandHandler, view As IWpfTextView, nextHandler As Action)
-                    commandHandler.ExecuteCommand(New EditorCommands.ReorderParametersCommandArgs(view, view.TextBuffer))
+                    commandHandler.ExecuteCommand(New VSC.ReorderParametersCommandArgs(view, view.TextBuffer))
                 End Sub)
         End Sub
 
@@ -1110,7 +1110,7 @@ partial class [|Program|]
         Public Sub RemoveParametersDuringRename()
             VerifyCommandCommitsRenameSessionAndExecutesCommand(
                 Sub(commandHandler As RenameCommandHandler, view As IWpfTextView, nextHandler As Action)
-                    commandHandler.ExecuteCommand(New EditorCommands.RemoveParametersCommandArgs(view, view.TextBuffer))
+                    commandHandler.ExecuteCommand(New VSC.RemoveParametersCommandArgs(view, view.TextBuffer))
                 End Sub)
         End Sub
 
@@ -1130,7 +1130,7 @@ partial class [|Program|]
         Public Sub EncapsulateFieldDuringRename()
             VerifyCommandCommitsRenameSessionAndExecutesCommand(
                 Sub(commandHandler As RenameCommandHandler, view As IWpfTextView, nextHandler As Action)
-                    commandHandler.ExecuteCommand(New EditorCommands.EncapsulateFieldCommandArgs(view, view.TextBuffer))
+                    commandHandler.ExecuteCommand(New VSC.EncapsulateFieldCommandArgs(view, view.TextBuffer))
                 End Sub)
         End Sub
 

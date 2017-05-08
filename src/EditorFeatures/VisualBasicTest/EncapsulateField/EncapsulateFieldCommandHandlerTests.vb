@@ -6,7 +6,7 @@ Imports Microsoft.CodeAnalysis.Editor.UnitTests.Workspaces
 Imports Microsoft.CodeAnalysis.Editor.VisualBasic.EncapsulateField
 Imports Microsoft.CodeAnalysis.Editor.VisualBasic.UnitTests
 Imports Microsoft.VisualStudio.Text.Operations
-Imports EditorCommands = Microsoft.VisualStudio.Text.UI.Commanding.Commands
+Imports VSC = Microsoft.VisualStudio.Text.UI.Commanding.Commands
 
 Namespace Microsoft.CodeAnalysis.Editor.VisualBasic.UnitTests.EncapsulateField
     Public Class EncapsulateFieldCommandHandlerTests
@@ -158,7 +158,7 @@ End Class
                         Return CommandState.Unavailable
                     End Function
 
-                Dim state = handler.GetCommandState(New EditorCommands.EncapsulateFieldCommandArgs(textView, textView.TextBuffer))
+                Dim state = handler.GetCommandState(New VSC.EncapsulateFieldCommandArgs(textView, textView.TextBuffer))
                 Assert.True(delegatedToNext)
                 Assert.False(state.IsAvailable)
             End Using

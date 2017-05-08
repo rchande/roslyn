@@ -20,6 +20,7 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.InlineRename
     [Order(Before = PredefinedCommandHandlerNames.ExtractInterface)]
     [Order(Before = PredefinedCommandHandlerNames.EncapsulateField)]
     [ExportCommandHandler(PredefinedCommandHandlerNames.Rename, ContentTypeNames.RoslynContentType, ContentTypeNames.XamlContentType)]
+    //[Microsoft.VisualStudio.Text.UI.Commanding.ExportCommandHandler(PredefinedCommandHandlerNames.Rename, ContentTypeNames.RoslynContentType, ContentTypeNames.XamlContentType)]
     internal partial class RenameCommandHandler
     {
         private readonly InlineRenameService _renameService;

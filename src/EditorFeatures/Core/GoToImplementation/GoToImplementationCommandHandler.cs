@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading;
-using Microsoft.CodeAnalysis.Editor.Commands;
 using Microsoft.CodeAnalysis.Editor.FindUsages;
 using Microsoft.CodeAnalysis.Editor.Host;
 using Microsoft.CodeAnalysis.Editor.Shared.Extensions;
@@ -14,14 +13,14 @@ using Microsoft.CodeAnalysis.Notification;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text;
-using EditorCommanding = Microsoft.VisualStudio.Text.UI.Commanding;
-using EditorCommands = Microsoft.VisualStudio.Text.UI.Commanding.Commands;
+using Microsoft.VisualStudio.Text.UI.Commanding.Commands;
+using VSC = Microsoft.VisualStudio.Text.UI.Commanding;
 
 namespace Microsoft.CodeAnalysis.Editor.GoToImplementation
 {
-    [EditorCommanding.ExportCommandHandler(PredefinedCommandHandlerNames.GoToImplementation,
+    [VSC.ExportCommandHandler(PredefinedCommandHandlerNames.GoToImplementation,
         ContentTypeNames.RoslynContentType)]
-    internal partial class GoToImplementationCommandHandler : EditorCommanding.ICommandHandler<EditorCommands.GoToImplementationCommandArgs>
+    internal partial class GoToImplementationCommandHandler : VSC.ICommandHandler<GoToImplementationCommandArgs>
     {
         private readonly IWaitIndicator _waitIndicator;
         private readonly IEnumerable<Lazy<IStreamingFindUsagesPresenter>> _streamingPresenters;
@@ -45,16 +44,16 @@ namespace Microsoft.CodeAnalysis.Editor.GoToImplementation
                     document?.GetLanguageService<IFindUsagesService>());
         }
 
-        public EditorCommanding.CommandState GetCommandState(EditorCommands.GoToImplementationCommandArgs args)
+        public VSC.CommandState GetCommandState(GoToImplementationCommandArgs args)
         {
             // Because this is expensive to compute, we just always say yes as long as the language allows it.
             var (document, implService, findUsagesService) = GetDocumentAndServices(args.SubjectBuffer.CurrentSnapshot);
             return implService != null || findUsagesService != null
-                ? EditorCommanding.CommandState.CommandIsAvailable
-                : EditorCommanding.CommandState.CommandIsUnavailable;
+                ? VSC.CommandState.CommandIsAvailable
+                : VSC.CommandState.CommandIsUnavailable;
         }
 
-        public bool ExecuteCommand(EditorCommands.GoToImplementationCommandArgs args)
+        public bool ExecuteCommand(GoToImplementationCommandArgs args)
         {
             var (document, implService, findUsagesService) = GetDocumentAndServices(args.SubjectBuffer.CurrentSnapshot);
             if (implService != null || findUsagesService != null)

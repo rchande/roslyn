@@ -14,16 +14,16 @@ using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Outlining;
+using Microsoft.VisualStudio.Text.UI.Commanding.Commands;
 using Roslyn.Utilities;
-using EditorCommanding = Microsoft.VisualStudio.Text.UI.Commanding;
-using EditorCommands = Microsoft.VisualStudio.Text.UI.Commanding.Commands;
+using VSC = Microsoft.VisualStudio.Text.UI.Commanding;
 
 namespace Microsoft.CodeAnalysis.Editor.CommandHandlers
 {
-    [EditorCommanding.ExportCommandHandler(PredefinedCommandHandlerNames.GoToAdjacentMember, ContentTypeNames.RoslynContentType)]
+    [VSC.ExportCommandHandler(PredefinedCommandHandlerNames.GoToAdjacentMember, ContentTypeNames.RoslynContentType)]
     internal class GoToAdjacentMemberCommandHandler : 
-        EditorCommanding.ICommandHandler<EditorCommands.GoToNextMemberCommandArgs>,
-        EditorCommanding.ICommandHandler<EditorCommands.GoToPreviousMemberCommandArgs>
+        VSC.ICommandHandler<GoToNextMemberCommandArgs>,
+        VSC.ICommandHandler<GoToPreviousMemberCommandArgs>
     {
         private readonly IWaitIndicator _waitIndicator;
         private readonly IOutliningManagerService _outliningManagerService;
@@ -37,18 +37,18 @@ namespace Microsoft.CodeAnalysis.Editor.CommandHandlers
             _outliningManagerService = outliningManagerService;
         }
 
-        public EditorCommanding.CommandState GetCommandState(EditorCommands.GoToNextMemberCommandArgs args)
+        public VSC.CommandState GetCommandState(GoToNextMemberCommandArgs args)
         {
             var document = args.SubjectBuffer.CurrentSnapshot.GetOpenDocumentInCurrentContextWithChanges();
             var caretPoint = args.TextView.GetCaretPoint(args.SubjectBuffer);
-            return IsAvailable(document, caretPoint) ? EditorCommanding.CommandState.CommandIsAvailable : EditorCommanding.CommandState.CommandIsUnavailable;
+            return IsAvailable(document, caretPoint) ? VSC.CommandState.CommandIsAvailable : VSC.CommandState.CommandIsUnavailable;
         }
 
-        public EditorCommanding.CommandState GetCommandState(EditorCommands.GoToPreviousMemberCommandArgs args)
+        public VSC.CommandState GetCommandState(GoToPreviousMemberCommandArgs args)
         {
             var document = args.SubjectBuffer.CurrentSnapshot.GetOpenDocumentInCurrentContextWithChanges();
             var caretPoint = args.TextView.GetCaretPoint(args.SubjectBuffer);
-            return IsAvailable(document, caretPoint) ? EditorCommanding.CommandState.CommandIsAvailable : EditorCommanding.CommandState.CommandIsUnavailable;
+            return IsAvailable(document, caretPoint) ? VSC.CommandState.CommandIsAvailable : VSC.CommandState.CommandIsUnavailable;
         }
 
         private static bool IsAvailable(Document document, SnapshotPoint? caretPoint)
@@ -67,12 +67,12 @@ namespace Microsoft.CodeAnalysis.Editor.CommandHandlers
             return documentSupportsFeatureService?.SupportsNavigationToAnyPosition(document) == true;
         }
 
-        public bool ExecuteCommand(EditorCommands.GoToNextMemberCommandArgs args)
+        public bool ExecuteCommand(GoToNextMemberCommandArgs args)
         {
             return ExecuteCommand(args.TextView, args.SubjectBuffer, next: true);
         }
 
-        public bool ExecuteCommand(EditorCommands.GoToPreviousMemberCommandArgs args)
+        public bool ExecuteCommand(GoToPreviousMemberCommandArgs args)
         {
             return ExecuteCommand(args.TextView, args.SubjectBuffer, next: false);
         }

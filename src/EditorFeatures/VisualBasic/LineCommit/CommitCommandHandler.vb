@@ -13,8 +13,8 @@ Imports Microsoft.VisualStudio.Text
 Imports Microsoft.VisualStudio.Text.Editor
 Imports Microsoft.VisualStudio.Text.Operations
 Imports Microsoft.VisualStudio.Utilities
-Imports EditorCommands = Microsoft.VisualStudio.Text.UI.Commanding.Commands
-Imports EditorCommanding = Microsoft.VisualStudio.Text.UI.Commanding
+Imports VSCommands = Microsoft.VisualStudio.Text.UI.Commanding.Commands
+Imports VSC = Microsoft.VisualStudio.Text.UI.Commanding
 
 Namespace Microsoft.CodeAnalysis.Editor.VisualBasic.LineCommit
     ''' <summary>
@@ -23,15 +23,15 @@ Namespace Microsoft.CodeAnalysis.Editor.VisualBasic.LineCommit
     ''' <remarks>This particular command filter acts as a "wrapper" around any other command, as it
     ''' wishes to invoke the commit after whatever processed the enter is done doing what it's
     ''' doing.</remarks>
-    <ExportCommandHandler(PredefinedCommandHandlerNames.Commit, ContentTypeNames.VisualBasicContentType)>
+    <VSC.ExportCommandHandler(PredefinedCommandHandlerNames.Commit, ContentTypeNames.VisualBasicContentType)>
     <Order(Before:=PredefinedCommandHandlerNames.EndConstruct)>
     <Order(Before:=PredefinedCommandHandlerNames.Completion)>
     Friend Class CommitCommandHandler
         Implements ICommandHandler(Of ReturnKeyCommandArgs)
         Implements ICommandHandler(Of PasteCommandArgs)
         Implements ICommandHandler(Of SaveCommandArgs)
-        Implements EditorCommanding.ICommandHandler(Of EditorCommands.FormatDocumentCommandArgs)
-        Implements EditorCommanding.ICommandHandler(Of EditorCommands.FormatSelectionCommandArgs)
+        Implements VSC.ICommandHandler(Of VSCommands.FormatDocumentCommandArgs)
+        Implements VSC.ICommandHandler(Of VSCommands.FormatSelectionCommandArgs)
 
         Private ReadOnly _bufferManagerFactory As CommitBufferManagerFactory
         Private ReadOnly _editorOperationsFactoryService As IEditorOperationsFactoryService
@@ -55,15 +55,15 @@ Namespace Microsoft.CodeAnalysis.Editor.VisualBasic.LineCommit
         End Sub
 
         ReadOnly Property InterestedInReadonlyBuffer As Boolean Implements _
-            EditorCommanding.ICommandHandler(Of EditorCommands.FormatDocumentCommandArgs).InterestedInReadOnlyBuffer,
-            EditorCommanding.ICommandHandler(Of EditorCommands.FormatSelectionCommandArgs).InterestedInReadOnlyBuffer
+            VSC.ICommandHandler(Of VSCommands.FormatDocumentCommandArgs).InterestedInReadOnlyBuffer,
+            VSC.ICommandHandler(Of VSCommands.FormatSelectionCommandArgs).InterestedInReadOnlyBuffer
             Get
                 Return False
             End Get
         End Property
 
-        Public Function ExecuteCommand(args As EditorCommands.FormatDocumentCommandArgs) As Boolean _
-            Implements EditorCommanding.ICommandHandler(Of EditorCommands.FormatDocumentCommandArgs).ExecuteCommand
+        Public Function ExecuteCommand(args As VSCommands.FormatDocumentCommandArgs) As Boolean _
+            Implements VSC.ICommandHandler(Of VSCommands.FormatDocumentCommandArgs).ExecuteCommand
 
             If Not args.SubjectBuffer.CanApplyChangeDocumentToWorkspace() Then
                 Return False
@@ -89,13 +89,13 @@ Namespace Microsoft.CodeAnalysis.Editor.VisualBasic.LineCommit
             Return result
         End Function
 
-        Public Function GetCommandState(args As EditorCommands.FormatDocumentCommandArgs) As EditorCommanding.CommandState _
-            Implements EditorCommanding.ICommandHandler(Of EditorCommands.FormatDocumentCommandArgs).GetCommandState
-            Return EditorCommanding.CommandState.CommandIsUnavailable
+        Public Function GetCommandState(args As VSCommands.FormatDocumentCommandArgs) As VSC.CommandState _
+            Implements VSC.ICommandHandler(Of VSCommands.FormatDocumentCommandArgs).GetCommandState
+            Return VSC.CommandState.CommandIsUnavailable
         End Function
 
-        Public Function ExecuteCommand(args As EditorCommands.FormatSelectionCommandArgs) As Boolean _
-            Implements EditorCommanding.ICommandHandler(Of EditorCommands.FormatSelectionCommandArgs).ExecuteCommand
+        Public Function ExecuteCommand(args As VSCommands.FormatSelectionCommandArgs) As Boolean _
+            Implements VSC.ICommandHandler(Of VSCommands.FormatSelectionCommandArgs).ExecuteCommand
             If Not args.SubjectBuffer.CanApplyChangeDocumentToWorkspace() Then
                 Return False
             End If
@@ -127,9 +127,9 @@ Namespace Microsoft.CodeAnalysis.Editor.VisualBasic.LineCommit
             'We don't call nextHandler, since we have handled this command.
         End Function
 
-        Public Function GetCommandState(args As EditorCommands.FormatSelectionCommandArgs) As EditorCommanding.CommandState _
-            Implements EditorCommanding.ICommandHandler(Of EditorCommands.FormatSelectionCommandArgs).GetCommandState
-            Return EditorCommanding.CommandState.CommandIsUnavailable
+        Public Function GetCommandState(args As VSCommands.FormatSelectionCommandArgs) As VSC.CommandState _
+            Implements VSC.ICommandHandler(Of VSCommands.FormatSelectionCommandArgs).GetCommandState
+            Return VSC.CommandState.CommandIsUnavailable
         End Function
 
         Public Sub ExecuteCommand(args As ReturnKeyCommandArgs, nextHandler As Action) Implements ICommandHandler(Of ReturnKeyCommandArgs).ExecuteCommand
