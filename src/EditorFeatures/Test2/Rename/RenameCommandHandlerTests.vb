@@ -1100,7 +1100,7 @@ partial class [|Program|]
         Public Sub ReorderParametersDuringRename()
             VerifyCommandCommitsRenameSessionAndExecutesCommand(
                 Sub(commandHandler As RenameCommandHandler, view As IWpfTextView, nextHandler As Action)
-                    commandHandler.ExecuteCommand(New ReorderParametersCommandArgs(view, view.TextBuffer), nextHandler)
+                    commandHandler.ExecuteCommand(New EditorCommands.ReorderParametersCommandArgs(view, view.TextBuffer))
                 End Sub)
         End Sub
 
@@ -1110,7 +1110,7 @@ partial class [|Program|]
         Public Sub RemoveParametersDuringRename()
             VerifyCommandCommitsRenameSessionAndExecutesCommand(
                 Sub(commandHandler As RenameCommandHandler, view As IWpfTextView, nextHandler As Action)
-                    commandHandler.ExecuteCommand(New RemoveParametersCommandArgs(view, view.TextBuffer), nextHandler)
+                    commandHandler.ExecuteCommand(New EditorCommands.RemoveParametersCommandArgs(view, view.TextBuffer))
                 End Sub)
         End Sub
 

@@ -429,33 +429,11 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
                     ExecuteSurroundWith(subjectBuffer, contentType, executeNextCommandTarget);
                     break;
 
-                case VSConstants.VSStd2KCmdID.REMOVEPARAMETERS:
-                    ExecuteRemoveParameters(subjectBuffer, contentType, executeNextCommandTarget);
-                    break;
-
-                case VSConstants.VSStd2KCmdID.REORDERPARAMETERS:
-                    ExecuteReorderParameters(subjectBuffer, contentType, executeNextCommandTarget);
-                    break;
-
                 default:
                     return NextCommandTarget.Exec(ref pguidCmdGroup, commandId, executeInformation, pvaIn, pvaOut);
             }
 
             return result;
-        }
-
-        private void ExecuteRemoveParameters(ITextBuffer subjectBuffer, IContentType contentType, Action executeNextCommandTarget)
-        {
-            CurrentHandlers.Execute(contentType,
-                args: new RemoveParametersCommandArgs(ConvertTextView(), subjectBuffer),
-                lastHandler: executeNextCommandTarget);
-        }
-
-        private void ExecuteReorderParameters(ITextBuffer subjectBuffer, IContentType contentType, Action executeNextCommandTarget)
-        {
-            CurrentHandlers.Execute(contentType,
-                args: new ReorderParametersCommandArgs(ConvertTextView(), subjectBuffer),
-                lastHandler: executeNextCommandTarget);
         }
 
         /// <remarks>TODO: Revert the change to use standard VS11 command pending https://github.com/dotnet/roslyn/issues/8927 .</remarks>

@@ -172,12 +172,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
                 case VSConstants.VSStd2KCmdID.BACKTAB:
                     return QueryBackTabStatus(prgCmds);
 
-                case VSConstants.VSStd2KCmdID.REMOVEPARAMETERS:
-                    return QueryRemoveParametersStatus(ref pguidCmdGroup, commandCount, prgCmds, commandText);
-
-                case VSConstants.VSStd2KCmdID.REORDERPARAMETERS:
-                    return QueryReorderParametersStatus(ref pguidCmdGroup, commandCount, prgCmds, commandText);
-
                 case VSConstants.VSStd2KCmdID.OUTLN_START_AUTOHIDING:
                     return QueryStartAutomaticOutliningStatus(ref pguidCmdGroup, commandCount, prgCmds, commandText);
 
@@ -384,20 +378,6 @@ namespace Microsoft.VisualStudio.LanguageServices.Implementation
         {
             return GetCommandState(
                 (v, b) => new ExecuteInInteractiveCommandArgs(v, b),
-                ref pguidCmdGroup, commandCount, prgCmds, commandText);
-        }
-
-        private int QueryRemoveParametersStatus(ref Guid pguidCmdGroup, uint commandCount, OLECMD[] prgCmds, IntPtr commandText)
-        {
-            return GetCommandState(
-                (v, b) => new RemoveParametersCommandArgs(v, b),
-                ref pguidCmdGroup, commandCount, prgCmds, commandText);
-        }
-
-        private int QueryReorderParametersStatus(ref Guid pguidCmdGroup, uint commandCount, OLECMD[] prgCmds, IntPtr commandText)
-        {
-            return GetCommandState(
-                (v, b) => new ReorderParametersCommandArgs(v, b),
                 ref pguidCmdGroup, commandCount, prgCmds, commandText);
         }
 

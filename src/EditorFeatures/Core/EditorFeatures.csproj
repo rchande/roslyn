@@ -177,11 +177,9 @@
     <Compile Include="Commands\PageUpKeyCommandArgs.cs" />
     <Compile Include="Commands\PasteCommandArgs.cs" />
     <Compile Include="Commands\RedoCommandArgs.cs" />
-    <Compile Include="Commands\RemoveParametersCommandArgs.cs" />
     <Compile Include="Commands\RenameCommandArgs.cs" />
     <Compile Include="Commands\OpenLineAboveCommandArgs.cs" />
     <Compile Include="Commands\StartAutomaticOutliningCommandArgs.cs" />
-    <Compile Include="Commands\ReorderParametersCommandArgs.cs" />
     <Compile Include="Commands\ReturnKeyCommandArgs.cs" />
     <Compile Include="Commands\SaveCommandArgs.cs" />
     <Compile Include="Commands\SelectAllCommandArgs.cs" />
