@@ -29,11 +29,80 @@ namespace Microsoft.VisualStudio.IntegrationTest.Utilities.OutOfProcess
             foreach (var input in typing)
             {
                 var parts = input.Split('\t');
-                var character = parts[0].Length > 1 ? parts[0] : SimulateTyping.GetEscaped(parts[0]);
+                var character = parts[0].Length == 1 ? parts[0] : Translate(parts[0]);
                 var delay = int.Parse(parts[1]);
                 Thread.Sleep(delay);
-                System.Windows.Forms.SendKeys.SendWait(character);
+                VisualStudioInstance.SendKeys.Send(character);
             }
+        }
+
+        private object Translate(string v)
+        {
+            if (v.Length == 1)
+            {
+                return v;
+            }
+
+            var (shiftstate, str) = GetShiftState(v);
+
+            if (str[0] == '{')
+            {
+                VirtualKey key = new VirtualKey();
+                switch (str)
+                {
+                    case ("{BACKSPACE}"):
+                        key = VirtualKey.Backspace;
+                        break;
+                    case ("{ENTER}"):
+                        key = VirtualKey.Enter;
+                        break;
+                    case ("{LEFT}"):
+                        key = VirtualKey.Left;
+                        break;
+                    case ("{RIGHT}"):
+                        key = VirtualKey.Right;
+                        break;
+                    case ("{END}"):
+                        key = VirtualKey.End;
+                        break;
+                    case ("{TAB}"):
+                        key = VirtualKey.Tab;
+                        break;
+                    case default:
+                        throw new Exception($"Uprocessed character {v}");
+
+                }
+
+                return new KeyPress(key, shiftstate);
+            }
+
+            throw new Exception($"Failed to translate {v}");
+        }
+
+        private static (ShiftState, string) GetShiftState(string value)
+        {
+            ShiftState s = 0;
+            for (int i = 0; i < value.Length; i++)
+            {
+                if (value[i] == '^')
+                {
+                    s |= ShiftState.Ctrl;
+                }
+                else if (value[i] == '+')
+                {
+                    s |= ShiftState.Shift;
+                }
+                else if (value[i] == '%')
+                {
+                    s |= ShiftState.Alt;
+                }
+                else
+                {
+                    return (s, value.Substring(i));
+                }
+            }
+
+            return (s, value);
         }
 
         private static class SimulateTyping

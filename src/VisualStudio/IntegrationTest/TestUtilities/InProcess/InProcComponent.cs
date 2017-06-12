@@ -25,6 +25,14 @@ namespace Microsoft.VisualStudio.IntegrationTest.Utilities.InProcess
     {
         protected InProcComponent() { }
 
+        public override object InitializeLifetimeService()
+        {
+            //var lease = (System.Runtime.Remoting.Lifetime.ILease)base.InitializeLifetimeService();
+            //lease.
+            return null;
+        }
+
+
         private static Dispatcher CurrentApplicationDispatcher
             => Application.Current.Dispatcher;
 

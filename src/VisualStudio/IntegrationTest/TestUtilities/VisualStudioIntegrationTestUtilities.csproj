@@ -178,6 +178,9 @@
     <PackageReference Include="System.Collections.Immutable">
       <Version>$(SystemCollectionsImmutableVersion)</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent">
+      <Version>$(MicrosoftDiagnosticsTracingTraceEventVersion)</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Compilers\Core\Portable\CodeAnalysis.csproj">
