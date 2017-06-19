@@ -29,10 +29,11 @@ namespace Microsoft.VisualStudio.IntegrationTest.Utilities.OutOfProcess
             foreach (var input in typing)
             {
                 var parts = input.Split('\t');
-                var character = parts[0].Length == 1 ? parts[0] : Translate(parts[0]);
+                var character = parts[0].Length > 1 ? parts[0] : SimulateTyping.GetEscaped(parts[0]);
                 var delay = int.Parse(parts[1]);
                 Thread.Sleep(delay);
-                VisualStudioInstance.SendKeys.Send(character);
+                System.Windows.Forms.SendKeys.SendWait(character);
+                //VisualStudioInstance.SendKeys.Send(character);
             }
         }
 

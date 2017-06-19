@@ -11,20 +11,20 @@ using Xunit;
 
 namespace Roslyn.VisualStudio.IntegrationTests.CSharp
 {
-    [Collection(nameof(SharedIntegrationHostFixture2))]
-    public class CSharpETW : AbstractIntegrationTest
+    [Collection(nameof(SharedIntegrationHostFixture))]
+    public class CSharpPerf : AbstractIntegrationTest
     {
         private string TempDirectory = @"C:\temp\perf";
 
-        public CSharpETW(VisualStudioInstanceFactory instanceFactory)
+        public CSharpPerf(VisualStudioInstanceFactory instanceFactory)
             : base(instanceFactory)
         {
         }
 
         [Fact]
-        public void ETWTyping()
+        public void CSharpTypingPerformance()
         {
-            DownloadProject("Roslyn-csharp", 1, new ConsoleAndFileLogger());
+            DownloadProject("RoslynSolutions", 2, new ConsoleAndFileLogger());
 
             VisualStudio.SolutionExplorer.OpenSolution(@"C:\temp\perf\RoslynSolutions\Roslyn-CSharp.sln");
             ETWActions.ForceGC(VisualStudio);
@@ -38,7 +38,7 @@ namespace Roslyn.VisualStudio.IntegrationTests.CSharp
             ETWActions.WaitForIdleCPU();
             //ETWActions.WaitForSolutionCrawler(VisualStudio);
             //System.Windows.Forms.MessageBox.Show("Attach debugger!");
-            using (DelayTracker.Start(@"C:\typingResults\", @"C:\roslyn-internal\open\binaries\release\dlls\PerformanceTestUtilities\TypingDelayAnalyzer.exe", "typing"))
+            using (DelayTracker.Start(@"C:\temp\perf", @"C:\roslyn-internal\open\binaries\debug\dlls\PerformanceTestUtilities\TypingDelayAnalyzer.exe", "typing"))
             {
                 VisualStudio.Editor.PlayBackTyping(@"C:\roslyn-internal\Closed\Test\PerformanceTests\Perf\tests\CSharp\TypingInputs\CSharpGoldilocksInput-MultipliedDelay.txt");
             }
@@ -67,6 +67,7 @@ namespace Roslyn.VisualStudio.IntegrationTests.CSharp
             }
 
             // Remove all .zip files that were downloaded before.
+            Directory.CreateDirectory(TempDirectory);
             foreach (var path in Directory.EnumerateFiles(TempDirectory, $"{name}.*.zip"))
             {
                 logger.Log($"Removing old zip {path}");

@@ -65,6 +65,7 @@
     <Compile Include="CSharp\CSharpSquigglesNetCore.cs" />
     <Compile Include="CSharp\CSharpWinForms.cs" />
     <Compile Include="CSharp\CSharpAddMissingReference.cs" />
+    <Compile Include="Performance\CSharpTyping2.cs" />
     <Compile Include="VisualBasic\BasicEditAndContinue.cs" />
     <Compile Include="VisualBasic\BasicEndConstruct.cs" />
     <Compile Include="VisualBasic\BasicExpressionEvaluator.cs" />
@@ -198,6 +199,10 @@
       <Project>{afde6bea-5038-4a4a-a88e-dbd2e4088eed}</Project>
       <Name>PdbUtilities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Test\Perf\Utilities\Perf.Utilities.csproj">
+      <Project>{59ad474e-2a35-4e8a-a74d-e33479977fbf}</Project>
+      <Name>Perf.Utilities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Test\Utilities\Desktop\TestUtilities.Desktop.csproj">
       <Project>{76c6f005-c89d-4348-bb4a-391898dbeb52}</Project>
       <Name>TestUtilities.Desktop</Name>
@@ -280,6 +285,11 @@
     <PackageReference Include="xunit.runner.visualstudio">
       <Version>$(xunitrunnervisualstudioVersion)</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Performance\CSharpGoldilocksInput-MultipliedDelay.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="..\..\..\..\build\Targets\Imports.targets" />
 </Project>
