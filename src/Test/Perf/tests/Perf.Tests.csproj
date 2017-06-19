@@ -34,6 +34,54 @@
     <Content Include="**\*.*" Exclude="$(MSBuildThisFile)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="csharp\typing\CSharpGoldilocksInput-MultipliedDelay.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="csharp\typing\csharp_typing.csx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="csharp\typing\CSharpTyping.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="UIAutomationTypes" />
+    <PackageReference Include="EnvDTE">
+      <Version>$(EnvDTEVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="EnvDTE80">
+      <Version>$(EnvDTE80Version)</Version>
+    </PackageReference>
+    <PackageReference Include="System.Collections.Immutable">
+      <Version>$(SystemCollectionsImmutableVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="xunit">
+      <Version>$(xunitVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="xunit.runner.console">
+      <Version>$(xunitrunnerconsoleVersion)</Version>
+    </PackageReference>
+    <PackageReference Include="xunit.runner.visualstudio">
+      <Version>$(xunitrunnervisualstudioVersion)</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\VisualStudio\IntegrationTest\IntegrationTests\VisualStudioIntegrationTests.csproj">
+      <Project>{e5a55c16-a5b9-4874-9043-a5266dc02f58}</Project>
+      <Name>VisualStudioIntegrationTests</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\VisualStudio\IntegrationTest\TestUtilities\VisualStudioIntegrationTestUtilities.csproj">
+      <Project>{3BED15FD-D608-4573-B432-1569C1026F6D}</Project>
+      <Name>VisualStudioIntegrationTestUtilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utilities\Perf.Utilities.csproj">
+      <Project>{59AD474E-2A35-4E8A-A74D-E33479977FBF}</Project>
+      <Name>Perf.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\..\..\..\build\Targets\Imports.targets" />
 </Project>

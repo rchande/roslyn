@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.Internal.Log;
 
 namespace Microsoft.VisualStudio.IntegrationTest.Utilities.InProcess
 {
-    internal class ETWActions
+    public class ETWActions
     {
         public static void StartETWListener(VisualStudioInstance instance)
         {

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.VisualStudio.IntegrationTest.Utilities.OutOfProcess
 {
-    internal class DelayTracker : IDisposable
+    public class DelayTracker : IDisposable
     {
         private static int fileCount = 1;
         private string outputPath;
