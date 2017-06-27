@@ -3,6 +3,7 @@
 Imports System.Threading
 Imports System.Threading.Tasks
 Imports System.Windows.Threading
+Imports Microsoft.CodeAnalysis.Notification
 Imports Microsoft.CodeAnalysis.Text
 Imports Microsoft.VisualStudio.Text
 
@@ -109,14 +110,18 @@ Namespace Microsoft.CodeAnalysis.Editor.VisualBasic.LineCommit
                         Return
                     End If
 
-                    Dim dirtyRegion = _dirtyState.DirtyRegion.GetSpan(_buffer.CurrentSnapshot)
-                    Dim info As FormattingInfo
-                    If Not TryComputeExpandedSpanToFormat(dirtyRegion, info, cancellationToken) Then
-                        Return
-                    End If
+                    Dim notificationService = _dirtyState.BaseDocument.Project.Solution.Workspace.Services _
+                        .GetService(Of IGlobalOperationNotificationService)()
+                    Using notificationService.Start("LineCommit")
+                        Dim dirtyRegion = _dirtyState.DirtyRegion.GetSpan(_buffer.CurrentSnapshot)
+                        Dim info As FormattingInfo
+                        If Not TryComputeExpandedSpanToFormat(dirtyRegion, info, cancellationToken) Then
+                            Return
+                        End If
 
-                    Dim tree = _dirtyState.BaseDocument.GetSyntaxTreeSynchronously(cancellationToken)
-                    _commitFormatter.CommitRegion(info.SpanToFormat, isExplicitFormat, info.UseSemantics, dirtyRegion, _dirtyState.BaseSnapshot, tree, cancellationToken)
+                        Dim tree = _dirtyState.BaseDocument.GetSyntaxTreeSynchronously(cancellationToken)
+                        _commitFormatter.CommitRegion(info.SpanToFormat, isExplicitFormat, info.UseSemantics, dirtyRegion, _dirtyState.BaseSnapshot, tree, cancellationToken)
+                    End Using
                 End Using
             Finally
                 ' We may have tracked a dirty region while committing or it may have been aborted.
