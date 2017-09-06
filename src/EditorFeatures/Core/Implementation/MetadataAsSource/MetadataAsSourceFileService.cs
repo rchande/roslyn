@@ -7,11 +7,14 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Disassembler;
 using Microsoft.CodeAnalysis.MetadataAsSource;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.SymbolMapping;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.Text;
+using Mono.Cecil;
 using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Editor.Implementation.MetadataAsSource
@@ -107,8 +110,26 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.MetadataAsSource
                     var temporaryDocument = _workspace.CurrentSolution.AddProject(temporaryProjectInfoAndDocumentId.Item1)
                                                                      .GetDocument(temporaryProjectInfoAndDocumentId.Item2);
 
-                    var sourceFromMetadataService = temporaryDocument.Project.LanguageServices.GetService<IMetadataAsSourceService>();
-                    temporaryDocument = await sourceFromMetadataService.AddSourceToAsync(temporaryDocument, symbol, cancellationToken).ConfigureAwait(false);
+                    //var sourceFromMetadataService = temporaryDocument.Project.LanguageServices.GetService<IMetadataAsSourceService>();
+                    var model = await temporaryDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+                    var reference = model.Compilation.GetMetadataReference(symbol.ContainingAssembly);
+                    var ad = AssemblyDefinition.ReadAssembly(reference.Display);
+                    foreach (var module in ad.Modules)
+                    {
+                        foreach (var type in module.Types)
+                        {
+                                if (type.Name == symbol.ContainingType.Name)
+                                {
+                                    var output = new PlainTextOutput();
+                                    var disassembler = new ICSharpCode.Decompiler.Disassembler.ReflectionDisassembler(output, true, CancellationToken.None);
+                                    disassembler.DisassembleType(type);
+
+                                    temporaryDocument = temporaryDocument.WithText(SourceText.From(output.ToString()));
+                                    break;
+                            }
+                        }
+                    }
+
 
                     // We have the content, so write it out to disk
                     var text = await temporaryDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);

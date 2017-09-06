@@ -33,6 +33,8 @@ namespace Microsoft.CodeAnalysis.MetadataAsSource
                 throw new ArgumentNullException(nameof(document));
             }
 
+
+
             var newSemanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var rootNamespace = newSemanticModel.GetEnclosingNamespace(0, cancellationToken);
 

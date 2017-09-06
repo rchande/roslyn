@@ -51,9 +51,7 @@ namespace Microsoft.CodeAnalysis.Editor.GoToDisassembly
 
         private void Do()
         {
-            var disassembler = new ReflectionDisassembler(new PlainTextOutput(), detectControlStructure: true, cancellationToken: CancellationToken.None);
-            disassembler.DisassembleMethod(new Mono.Cecil.MethodDefinition()
-
+            
         }
     }
 }
