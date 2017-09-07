@@ -731,5 +731,9 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.CodeGeneration
 
             Return declaration
         End Function
+
+        Public Overrides Function UpdateDeclarationDocumentation(declaration As SyntaxNode, symbol As ISymbol, Optional cancellationToken As CancellationToken = Nothing) As SyntaxNode
+            Throw New NotImplementedException()
+        End Function
     End Class
 End Namespace

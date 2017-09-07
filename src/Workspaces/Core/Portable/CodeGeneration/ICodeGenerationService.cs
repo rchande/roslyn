@@ -114,6 +114,9 @@ namespace Microsoft.CodeAnalysis.CodeGeneration
         /// </summary>
         TDeclarationNode UpdateDeclarationMembers<TDeclarationNode>(TDeclarationNode declaration, IList<ISymbol> newMembers, CodeGenerationOptions options = null, CancellationToken cancellationToken = default) where TDeclarationNode : SyntaxNode;
 
+        SyntaxNode UpdateDeclarationDocumentation(SyntaxNode declaration, ISymbol symbol, CancellationToken cancellationToken = default);
+
+
         /// <summary>
         /// Adds the statements to destination.
         /// </summary>

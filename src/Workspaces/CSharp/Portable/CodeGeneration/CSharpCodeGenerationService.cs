@@ -821,5 +821,13 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGeneration
 
             return declaration;
         }
+
+        public override SyntaxNode UpdateDeclarationDocumentation(SyntaxNode declaration, ISymbol symbol, CancellationToken cancellationToken = default)
+        {
+            return CSharpCodeGenerationHelpers.ConditionallyAddDocumentationCommentTo(
+                (SyntaxNode)declaration,
+                symbol,
+                new CodeGenerationOptions(generateDocumentationComments: true));
+        }
     }
 }

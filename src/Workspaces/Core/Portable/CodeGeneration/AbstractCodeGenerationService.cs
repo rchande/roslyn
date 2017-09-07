@@ -559,5 +559,7 @@ namespace Microsoft.CodeAnalysis.CodeGeneration
 
             return updatedModifiersList;
         }
+
+        public abstract SyntaxNode UpdateDeclarationDocumentation(SyntaxNode declaration, ISymbol symbol, CancellationToken cancellationToken = default);
     }
 }

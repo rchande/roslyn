@@ -5,10 +5,13 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Disassembler;
+using Microsoft.CodeAnalysis.CodeGeneration;
 using Microsoft.CodeAnalysis.MetadataAsSource;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.SymbolMapping;
@@ -114,22 +117,28 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.MetadataAsSource
                     var model = await temporaryDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
                     var reference = model.Compilation.GetMetadataReference(symbol.ContainingAssembly);
                     var ad = AssemblyDefinition.ReadAssembly(reference.Display);
+
+                    var total = ConcatenateNamespaces(symbol.ContainingType);
+
                     foreach (var module in ad.Modules)
                     {
                         foreach (var type in module.Types)
                         {
-                                if (type.Name == symbol.ContainingType.Name)
-                                {
-                                    var output = new PlainTextOutput();
-                                    var disassembler = new ICSharpCode.Decompiler.Disassembler.ReflectionDisassembler(output, true, CancellationToken.None);
-                                    disassembler.DisassembleType(type);
+                            if (type.Name == symbol.ContainingType.Name && type.Namespace == total)
+                            {
+                                var output = new PlainTextOutput();
+                                var context = new DecompilerContext(module);
+                                var AstBuilder = new AstBuilder(context);
+                                AstBuilder.AddType(type);
+                                AstBuilder.GenerateCode(output);
 
-                                    temporaryDocument = temporaryDocument.WithText(SourceText.From(output.ToString()));
-                                    break;
+                                temporaryDocument = temporaryDocument.WithText(SourceText.From(output.ToString()));
+                                break;
                             }
                         }
                     }
 
+                    temporaryDocument = await CopyDocumentation(symbol.ContainingType, temporaryDocument, cancellationToken).ConfigureAwait(false);
 
                     // We have the content, so write it out to disk
                     var text = await temporaryDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
@@ -178,6 +187,44 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.MetadataAsSource
             var documentTooltip = topLevelNamedType.ToDisplayString(new SymbolDisplayFormat(typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces));
 
             return new MetadataAsSourceFile(fileInfo.TemporaryFilePath, navigateLocation, documentName, documentTooltip);
+        }
+
+        private async Task<Document> CopyDocumentation(INamedTypeSymbol containingType, Document temporaryDocument, CancellationToken cancellationToken)
+        {
+            var symbols = containingType.GetMembers()
+                                        .Select(s => (s.GetDocumentationCommentXml(cancellationToken: cancellationToken), SymbolKey.Create(s, cancellationToken), s))
+                                        .Where(s => !string.IsNullOrWhiteSpace(s.Item1));
+
+            foreach (var (xml, key, originalSymbol) in symbols)
+            {
+                var semanticModel = await temporaryDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+                var resolved = key.Resolve(semanticModel.Compilation, cancellationToken: cancellationToken).GetAnySymbol();
+                var service = temporaryDocument.GetLanguageService<ICodeGenerationService>();
+                if (resolved != null)
+                {
+                    var node = resolved.Locations.First().FindNode(cancellationToken);
+                    var updatedNode = service.UpdateDeclarationDocumentation(node, originalSymbol, cancellationToken);
+                    var updateTree = node.SyntaxTree.GetRoot().ReplaceNode(node, updatedNode);
+                    temporaryDocument = temporaryDocument.WithSyntaxRoot(updateTree);
+                }
+
+            }
+
+            return temporaryDocument;
+
+        }
+
+        private string ConcatenateNamespaces(INamedTypeSymbol containingType)
+        {
+            Stack<string> stack = new Stack<string>();
+            var ns = containingType.ContainingNamespace;
+            do
+            {
+                stack.Push(ns.Name);
+                ns = ns.ContainingNamespace;
+            } while (ns != null && !ns.IsGlobalNamespace);
+
+            return string.Join(".", stack);
         }
 
         private async Task<Location> RelocateSymbol_NoLock(MetadataAsSourceGeneratedFileInfo fileInfo, SymbolKey symbolId, CancellationToken cancellationToken)
