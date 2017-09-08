@@ -12,6 +12,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Disassembler;
 using Microsoft.CodeAnalysis.CodeGeneration;
+using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.MetadataAsSource;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.SymbolMapping;
@@ -118,13 +119,14 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.MetadataAsSource
                     var reference = model.Compilation.GetMetadataReference(symbol.ContainingAssembly);
                     var ad = AssemblyDefinition.ReadAssembly(reference.Display);
 
-                    var total = ConcatenateNamespaces(symbol.ContainingType);
+                    var containingOrThis = symbol.GetContainingTypeOrThis();
+                    var total = ConcatenateNamespaces(containingOrThis);
 
                     foreach (var module in ad.Modules)
                     {
                         foreach (var type in module.Types)
                         {
-                            if (type.Name == symbol.ContainingType.Name && type.Namespace == total)
+                            if (type.Name == containingOrThis.Name && type.Namespace == total)
                             {
                                 var output = new PlainTextOutput();
                                 var context = new DecompilerContext(module);
@@ -138,7 +140,7 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.MetadataAsSource
                         }
                     }
 
-                    temporaryDocument = await CopyDocumentation(symbol.ContainingType, temporaryDocument, cancellationToken).ConfigureAwait(false);
+                    temporaryDocument = await CopyDocumentation(containingOrThis, temporaryDocument, cancellationToken).ConfigureAwait(false);
 
                     // We have the content, so write it out to disk
                     var text = await temporaryDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
@@ -195,6 +197,9 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.MetadataAsSource
                                         .Select(s => (s.GetDocumentationCommentXml(cancellationToken: cancellationToken), SymbolKey.Create(s, cancellationToken), s))
                                         .Where(s => !string.IsNullOrWhiteSpace(s.Item1));
 
+            var options = await temporaryDocument.GetOptionsAsync(cancellationToken).ConfigureAwait(false);
+            temporaryDocument = await Formatter.FormatAsync(temporaryDocument, options, cancellationToken).ConfigureAwait(false);
+
             foreach (var (xml, key, originalSymbol) in symbols)
             {
                 var semanticModel = await temporaryDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
@@ -202,16 +207,22 @@ namespace Microsoft.CodeAnalysis.Editor.Implementation.MetadataAsSource
                 var service = temporaryDocument.GetLanguageService<ICodeGenerationService>();
                 if (resolved != null)
                 {
-                    var node = resolved.Locations.First().FindNode(cancellationToken);
-                    var updatedNode = service.UpdateDeclarationDocumentation(node, originalSymbol, cancellationToken);
-                    var updateTree = node.SyntaxTree.GetRoot().ReplaceNode(node, updatedNode);
-                    temporaryDocument = temporaryDocument.WithSyntaxRoot(updateTree);
+                    var location = resolved.Locations.FirstOrDefault(l => l.SourceTree == semanticModel.SyntaxTree);
+                    if (location != null)
+                    {
+                        var node = location.FindNode(cancellationToken);
+                        var updatedNode = service.UpdateDeclarationDocumentation(node, originalSymbol, cancellationToken).WithAdditionalAnnotations(Formatter.Annotation);
+                        var updateTree = node.SyntaxTree.GetRoot().ReplaceNode(node, updatedNode);
+                        updateTree = await Formatter.FormatAsync(updateTree, Formatter.Annotation, temporaryDocument.Project.Solution.Workspace).ConfigureAwait(false);
+                        temporaryDocument = temporaryDocument.WithSyntaxRoot(updateTree);
+                    }
                 }
 
             }
 
-            return temporaryDocument;
+            temporaryDocument = await Formatter.FormatAsync(temporaryDocument, options, cancellationToken).ConfigureAwait(false);
 
+            return temporaryDocument;
         }
 
         private string ConcatenateNamespaces(INamedTypeSymbol containingType)

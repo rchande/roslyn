@@ -268,8 +268,8 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGeneration
             }
 
             var result = TryGetDocumentationComment(symbol, "///", out var comment, cancellationToken)
-                ? node.WithPrependedLeadingTrivia(SyntaxFactory.ParseLeadingTrivia(comment))
-                      .WithPrependedLeadingTrivia(SyntaxFactory.ElasticMarker)
+                ? node.WithPrependedLeadingTrivia(SyntaxFactory.ParseLeadingTrivia(comment).Add(SyntaxFactory.ElasticCarriageReturnLineFeed))
+                      .WithPrependedLeadingTrivia(SyntaxFactory.ElasticCarriageReturnLineFeed)
                 : node;
             return result;
         }

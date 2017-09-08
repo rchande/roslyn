@@ -143,11 +143,24 @@ namespace Microsoft.CodeAnalysis.CodeGeneration
                 return false;
             }
 
+            var lines = xml.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            List<string> updatedLInes = new List<string>();
+            foreach (var line in lines)
+            {
+                //var indexOfTripleSlash = line.IndexOf(@"///");
+                //var subString = line.Substring(indexOfTripleSlash + 3);
+                //var firstNonWhitespace = subString.GetFirstNonWhitespaceIndexInString();
+                //updatedLInes.Add(commentToken + " " + subString.Substring(firstNonWhitespace));
+                updatedLInes.Add(line.TrimStart());
+            }
+
+            comment = string.Join("\n", updatedLInes);
+
             var commentStarter = string.Concat(commentToken, " ");
             var newLineStarter = string.Concat("\n", commentStarter);
 
             // Start the comment with an empty line for visual clarity.
-            comment = string.Concat(commentStarter, "\r\n", commentStarter, xml.Replace("\n", newLineStarter));
+            comment = string.Concat(commentStarter, "\r\n", commentStarter, comment.Replace("\n", newLineStarter));
             return true;
         }
 
