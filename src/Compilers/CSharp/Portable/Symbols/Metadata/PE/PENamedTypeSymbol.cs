@@ -171,6 +171,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             if (arity == 0)
             {
+                if (moduleSymbol.Name.Contains("Microsoft.ML"))
+                {
+
+                }
+
                 result = new PENamedTypeSymbolNonGeneric(moduleSymbol, containingNamespace, handle, emittedNamespaceName, out mangleName);
             }
             else
